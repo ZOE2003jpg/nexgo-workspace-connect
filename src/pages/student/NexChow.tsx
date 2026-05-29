@@ -24,20 +24,27 @@ export function NexChow({ onSelect, cart, onCheckout }: any) {
 
   const total = cart.reduce((a: number, c: any) => a + c.price * c.qty, 0);
   const qty = cart.reduce((a: number, c: any) => a + c.qty, 0);
-  const cuisines = ["All", ...new Set(restaurants.map((r: any) => r.cuisine))];
+  const CATEGORIES = [
+    { id: "All", label: "All" },
+    { id: "food", label: "Food" },
+    { id: "market", label: "Market" },
+    { id: "supermarket", label: "Supermarket" },
+    { id: "retail", label: "Retail" },
+    { id: "container", label: "Container" },
+  ];
   const list = restaurants.filter((r: any) => {
     const ms = r.name.toLowerCase().includes(search.toLowerCase());
-    const mf = filter === "All" || r.cuisine === filter;
+    const mf = filter === "All" || r.category === filter;
     return ms && mf;
   });
 
   return (
     <div style={{ padding: "24px 16px", animation: "fadeUp .4s ease", maxWidth: 800, margin: "0 auto", width: "100%" }}>
-      <PHeader title="NexChow" sub="Order food on campus" icon="🍽️" />
-      <input style={{ ...inp({ marginTop: 16, marginBottom: 14 }) }} placeholder="🔍  Search restaurants…" value={search} onChange={e => setSearch(e.target.value)} />
+      <PHeader title="NexShop" sub="Food, markets, retail & more" icon="🛍️" />
+      <input style={{ ...inp({ marginTop: 16, marginBottom: 14 }) }} placeholder="🔍  Search vendors…" value={search} onChange={e => setSearch(e.target.value)} />
       <div style={{ display: "flex", gap: 8, marginBottom: 16, overflowX: "auto", paddingBottom: 4 }}>
-        {cuisines.map((c: any) => (
-          <button key={c} onClick={() => setFilter(c)} style={{ whiteSpace: "nowrap", padding: "8px 16px", borderRadius: 20, fontSize: 12, fontWeight: 600, background: filter === c ? G.goldGlow : G.b4, color: filter === c ? G.gold : G.whiteDim, border: `1px solid ${filter === c ? G.gold : G.b5}`, cursor: "pointer", transition: "all .2s" }}>{c}</button>
+        {CATEGORIES.map((c) => (
+          <button key={c.id} onClick={() => setFilter(c.id)} style={{ whiteSpace: "nowrap", padding: "8px 16px", borderRadius: 20, fontSize: 12, fontWeight: 600, background: filter === c.id ? G.goldGlow : G.b4, color: filter === c.id ? G.gold : G.whiteDim, border: `1px solid ${filter === c.id ? G.gold : G.b5}`, cursor: "pointer", transition: "all .2s" }}>{c.label}</button>
         ))}
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 14, paddingBottom: qty > 0 ? 80 : 0 }}>
