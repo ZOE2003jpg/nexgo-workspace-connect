@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "@/lib/router-compat";
 import { G, injectStyles, btn } from "@/lib/nexgo-theme";
 import NEXGO_LOGO from "@/assets/nexgo-logo.png";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const FEATURES = [
   {
@@ -66,6 +67,7 @@ export default function LandingPage() {
       }}>
         <img src={NEXGO_LOGO} alt="NexGo" style={{ height: 36, objectFit: "contain" }} />
         <div style={{ display: "flex", gap: 10 }}>
+          <ThemeToggle className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(201,168,76,0.4)] bg-transparent text-[#c9a84c] transition hover:bg-[rgba(201,168,76,0.1)]" />
           <button style={{ ...btn("outline"), padding: "10px 22px", fontSize: 13, borderRadius: 10 }} onClick={() => navigate("/signin")}>Sign In</button>
           <button style={{ ...btn("gold"), padding: "10px 22px", fontSize: 13, borderRadius: 10 }} onClick={() => navigate("/signup")}>Sign Up</button>
         </div>
