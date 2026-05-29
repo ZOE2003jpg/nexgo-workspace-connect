@@ -60,7 +60,7 @@ export function Auth() {
       <div style={{ position: "absolute", width: 300, height: 300, borderRadius: "50%", background: `radial-gradient(circle,rgba(201,168,76,0.07) 0%,transparent 70%)`, bottom: -100, left: -100, pointerEvents: "none" }} />
       <div style={{ width: "100%", maxWidth: 420, animation: "fadeUp .5s ease" }}>
         <div style={{ textAlign: "center", marginBottom: 36, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-          <img src={NEXGO_LOGO} alt="NexGo" style={{ width: 200, objectFit: "contain", filter: "drop-shadow(0 0 20px rgba(201,168,76,0.4))" }} />
+          <img src={NEXGO_LOGO} alt="NexGo" style={{ width: 110, objectFit: "contain", filter: "drop-shadow(0 0 14px rgba(201,168,76,0.35))" }} />
           <div style={{ color: G.whiteDim, fontSize: 13, marginTop: 2 }}>
             {step === "login" ? "Welcome back, campus legend" : step === "forgot" ? "Reset your password" : "Join the campus revolution"}
           </div>
