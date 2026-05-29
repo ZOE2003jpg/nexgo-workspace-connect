@@ -1,18 +1,25 @@
+/**
+ * Palette tokens. Values are CSS variables defined in `injectStyles` below
+ * so the entire app reacts to light/dark mode without re-rendering.
+ *  - "black" = page background (white in light mode, near-black in dark)
+ *  - "white" = primary text color (near-black in light mode, cream in dark)
+ * Names are kept for backwards compatibility with existing pages.
+ */
 export const G = {
-  gold: "#C9A84C",
-  goldLight: "#E8C97A",
-  goldDark: "#9A7A2E",
-  goldGlow: "rgba(201,168,76,0.15)",
-  goldBorder: "rgba(201,168,76,0.3)",
-  black: "#0A0A0A",
-  b2: "#111111",
-  b3: "#1A1A1A",
-  b4: "#242424",
-  b5: "#2E2E2E",
-  white: "#F5F0E8",
-  whiteDim: "rgba(245,240,232,0.55)",
-  danger: "#E05555",
-  success: "#4CAF7A",
+  gold: "var(--g-gold)",
+  goldLight: "var(--g-gold-light)",
+  goldDark: "var(--g-gold-dark)",
+  goldGlow: "var(--g-gold-glow)",
+  goldBorder: "var(--g-gold-border)",
+  black: "var(--g-bg)",
+  b2: "var(--g-b2)",
+  b3: "var(--g-b3)",
+  b4: "var(--g-b4)",
+  b5: "var(--g-b5)",
+  white: "var(--g-text)",
+  whiteDim: "var(--g-text-dim)",
+  danger: "var(--g-danger)",
+  success: "var(--g-success)",
 };
 
 export const injectStyles = () => {
@@ -21,9 +28,23 @@ export const injectStyles = () => {
   s.id = "nexgo-styles";
   s.textContent = `
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+    :root{
+      --g-gold:#C9A84C; --g-gold-light:#E8C97A; --g-gold-dark:#9A7A2E;
+      --g-gold-glow:rgba(201,168,76,0.12); --g-gold-border:rgba(201,168,76,0.3);
+      --g-bg:#FAFAF7; --g-b2:#F2EFE8; --g-b3:#FFFFFF; --g-b4:#ECE7DC; --g-b5:#DFD8C7;
+      --g-text:#1A1A1A; --g-text-dim:rgba(26,26,26,0.62);
+      --g-danger:#D14343; --g-success:#2E9E63;
+    }
+    html.dark{
+      --g-gold:#C9A84C; --g-gold-light:#E8C97A; --g-gold-dark:#9A7A2E;
+      --g-gold-glow:rgba(201,168,76,0.15); --g-gold-border:rgba(201,168,76,0.3);
+      --g-bg:#0A0A0A; --g-b2:#111111; --g-b3:#1A1A1A; --g-b4:#242424; --g-b5:#2E2E2E;
+      --g-text:#F5F0E8; --g-text-dim:rgba(245,240,232,0.55);
+      --g-danger:#E05555; --g-success:#4CAF7A;
+    }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html,body,#root{height:100%;background:#0A0A0A;color:#F5F0E8;font-family:'DM Sans',sans-serif;}
-    ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#111}::-webkit-scrollbar-thumb{background:#9A7A2E;border-radius:2px}
+    html,body,#root{height:100%;background:var(--g-bg);color:var(--g-text);font-family:'DM Sans',sans-serif;transition:background .25s ease,color .25s ease;}
+    ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--g-b2)}::-webkit-scrollbar-thumb{background:var(--g-gold-dark);border-radius:2px}
     @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
     @keyframes shimmer{0%,100%{opacity:.6}50%{opacity:1}}
     @keyframes spin{to{transform:rotate(360deg)}}
