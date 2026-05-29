@@ -25,7 +25,7 @@ export function BottomNav({ role, tab, setTab, cartCount }: any) {
       right: [{ id: "analytics", icon: "📈", label: "Analytics" }, { id: "profile", icon: "👤", label: "Profile" }],
       more: [{ id: "restaurants", icon: "🍽️", label: "Restaurants" }, { id: "orders", icon: "📦", label: "Orders" }, { id: "settings", icon: "⚙️", label: "Settings" }],
     },
-  }[role] || { left: [], right: [], more: [] };
+  }[role as "student" | "vendor" | "rider" | "admin"] || { left: [], right: [], more: [] };
 
   const NavBtn = ({ t }: any) => (
     <button onClick={() => { setTab(t.id); setShowMore(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "6px 2px", background: "transparent", border: "none", cursor: "pointer", position: "relative" }}>

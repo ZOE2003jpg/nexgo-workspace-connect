@@ -23,7 +23,8 @@ export const Chip = ({ children }: any) => (
 );
 
 export const Badge = ({ status }: any) => {
-  const c: any = ({ delivered: G.success, Delivered: G.success, Done: G.success, Active: G.gold, out_for_delivery: G.gold, "In Transit": G.gold, preparing: "#E8A030", Preparing: "#E8A030", Pending: G.whiteDim, accepted: G.gold, ready: G.goldLight, Ready: G.goldLight, Open: G.success, Suspended: G.danger, Confirmed: G.success, cancelled: G.danger, under_review: "#E8A030" })[status] || G.whiteDim;
+  const map: Record<string, string> = { delivered: G.success, Delivered: G.success, Done: G.success, Active: G.gold, out_for_delivery: G.gold, "In Transit": G.gold, preparing: "#E8A030", Preparing: "#E8A030", Pending: G.whiteDim, accepted: G.gold, ready: G.goldLight, Ready: G.goldLight, Open: G.success, Suspended: G.danger, Confirmed: G.success, cancelled: G.danger, under_review: "#E8A030" };
+  const c: string = map[status] || G.whiteDim;
   return <div style={{ background: `${c}22`, color: c, fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 6, display: "inline-block", whiteSpace: "nowrap" }}>{status}</div>;
 };
 
