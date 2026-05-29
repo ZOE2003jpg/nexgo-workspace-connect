@@ -22,10 +22,15 @@ export function BottomNav({ role, tab, setTab, cartCount }: any) {
     },
     admin: {
       left: [{ id: "adashboard", icon: "📊", label: "Dashboard" }, { id: "users", icon: "👥", label: "Users" }],
-      right: [{ id: "analytics", icon: "📈", label: "Analytics" }, { id: "profile", icon: "👤", label: "Profile" }],
-      more: [{ id: "restaurants", icon: "🍽️", label: "Restaurants" }, { id: "orders", icon: "📦", label: "Orders" }, { id: "settings", icon: "⚙️", label: "Settings" }],
+      right: [{ id: "riders", icon: "🏍️", label: "Riders" }, { id: "profile", icon: "👤", label: "Profile" }],
+      more: [{ id: "restaurants", icon: "🍽️", label: "Restaurants" }, { id: "orders", icon: "📦", label: "Orders" }, { id: "settings", icon: "⚙️", label: "Settings" }, { id: "analytics", icon: "📈", label: "Analytics" }],
     },
-  }[role as "student" | "vendor" | "rider" | "admin"] || { left: [], right: [], more: [] };
+    school: {
+      left: [{ id: "sdashboard", icon: "📊", label: "Dashboard" }],
+      right: [{ id: "profile", icon: "👤", label: "Profile" }],
+      more: [],
+    },
+  }[role as "student" | "vendor" | "rider" | "admin" | "school"] || { left: [], right: [], more: [] };
 
   const NavBtn = ({ t }: any) => (
     <button onClick={() => { setTab(t.id); setShowMore(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "6px 2px", background: "transparent", border: "none", cursor: "pointer", position: "relative" }}>

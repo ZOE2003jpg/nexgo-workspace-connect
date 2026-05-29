@@ -17,6 +17,8 @@ import { ChatScreen } from "@/pages/shared/ChatScreen";
 import { VendorApp } from "@/pages/vendor/VendorApp";
 import { RiderApp } from "@/pages/rider/RiderApp";
 import { AdminApp } from "@/pages/admin/AdminApp";
+import { SchoolApp } from "@/pages/school/SchoolApp";
+import { NotificationsBell } from "@/components/nexgo/NotificationsBell";
 
 export default function NexGoApp() {
   useEffect(() => { injectStyles(); }, []);
@@ -33,7 +35,7 @@ export default function NexGoApp() {
   useEffect(() => {
     if (authLoading) return;
     if (authRole) {
-      setTab({ student: "home", vendor: "dashboard", rider: "rdashboard", admin: "adashboard" }[authRole] || "home");
+      setTab(({ student: "home", vendor: "dashboard", rider: "rdashboard", admin: "adashboard", school: "sdashboard" } as Record<string, string>)[authRole] || "home");
     }
   }, [authRole, authLoading]);
 
@@ -73,11 +75,15 @@ export default function NexGoApp() {
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column", background: G.black, position: "relative" }}>
       <ToastContainer />
+      <div style={{ position: "fixed", top: 14, right: 14, zIndex: 110 }}>
+        <NotificationsBell />
+      </div>
       <div style={{ flex: 1, overflowY: "auto", paddingBottom: 80 }}>
         {role === "student" && <StudentContent />}
         {role === "vendor" && <VendorApp tab={tab} onLogout={handleLogout} />}
         {role === "rider" && <RiderApp tab={tab} onLogout={handleLogout} />}
         {role === "admin" && <AdminApp tab={tab} onLogout={handleLogout} />}
+        {role === "school" && (tab === "profile" ? <ProfileScreen onLogout={handleLogout} /> : <SchoolApp />)}
       </div>
       <BottomNav role={role} tab={tab} setTab={setTab} cartCount={cart.reduce((a: number, c: any) => a + c.qty, 0)} />
     </div>
