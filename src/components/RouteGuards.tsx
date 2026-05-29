@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate } from "@/lib/router-compat";
 import { useAuth } from "@/hooks/useAuth";
 import { G } from "@/lib/nexgo-theme";
 import { Spinner } from "@/components/nexgo/SharedUI";
