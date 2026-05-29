@@ -3,10 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { G, btn, card, inp } from "@/lib/nexgo-theme";
 import { STitle, PHeader, Badge, Lbl, Spinner } from "@/components/nexgo/SharedUI";
 import { ProfileScreen } from "@/pages/shared/ProfileScreen";
+import { AdminRiderApprovals } from "@/pages/admin/AdminRiderApprovals";
 import { toast } from "@/components/nexgo/ToastContainer";
 import { useAuth } from "@/hooks/useAuth";
 
-const ROLES = ["student", "vendor", "rider", "admin"] as const;
+const ROLES = ["student", "vendor", "rider", "admin", "school"] as const;
 
 export function AdminApp({ tab, onLogout }: any) {
   const { user } = useAuth();
@@ -88,6 +89,8 @@ export function AdminApp({ tab, onLogout }: any) {
       toast(result?.message || "Failed", "error");
     }
   };
+
+  if (tab === "riders") return <AdminRiderApprovals />;
 
   if (tab === "users") return (
     <div style={{ padding: "24px 16px", display: "flex", flexDirection: "column", gap: 14, animation: "fadeUp .4s ease", maxWidth: 800, margin: "0 auto", width: "100%" }}>

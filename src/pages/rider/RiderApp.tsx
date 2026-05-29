@@ -6,6 +6,7 @@ import { STitle, PHeader, Badge, Spinner } from "@/components/nexgo/SharedUI";
 import { toast } from "@/components/nexgo/ToastContainer";
 import { ProfileScreen } from "@/pages/shared/ProfileScreen";
 import { ChatScreen } from "@/pages/shared/ChatScreen";
+import { RiderOnboarding } from "@/pages/rider/RiderOnboarding";
 
 export function RiderApp({ tab, onLogout }: any) {
   const { user } = useAuth();
@@ -13,9 +14,17 @@ export function RiderApp({ tab, onLogout }: any) {
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [dispatches, setDispatches] = useState<any[]>([]);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const [otpOrderId, setOtpOrderId] = useState<string | null>(null);
-  const [otpInput, setOtpInput] = useState("");
-  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [codeOpen, setCodeOpen] = useState(false);
+  const [codeInput, setCodeInput] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [approved, setApproved] = useState<boolean | null>(null);
+
+  // Onboarding check
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("rider_profiles").select("approved").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => setApproved(!!data?.approved));
+  }, [user]);
 
   const fetchData = useCallback(() => {
     if (!user) return;
@@ -25,61 +34,53 @@ export function RiderApp({ tab, onLogout }: any) {
       .then(({ data }) => { if (data) setDispatches(data); });
   }, [user]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { if (approved) fetchData(); }, [fetchData, approved]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !approved) return;
     const channel = supabase.channel('rider-orders')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `rider_id=eq.${user.id}` }, () => { fetchData(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'dispatches', filter: `rider_id=eq.${user.id}` }, () => { fetchData(); })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, [user, fetchData]);
+  }, [user, fetchData, approved]);
 
   const updateOrder = async (id: string, newStatus: string) => {
     if (!user) return;
     setUpdatingId(id);
-
     if (newStatus === "out_for_delivery") {
       const { data: validation } = await supabase.rpc("validate_order_transition", { _order_id: id, _new_status: newStatus, _user_id: user.id });
       const v = validation as any;
       if (!v?.valid) { toast(v?.message || "Invalid transition", "error"); setUpdatingId(null); return; }
-      await supabase.rpc("generate_delivery_otp", { _order_id: id });
       await supabase.from("orders").update({ status: newStatus }).eq("id", id);
       setDeliveries(p => p.map(d => d.id === id ? { ...d, status: newStatus } : d));
-      toast("Marked out for delivery. OTP sent to student.", "success");
-      setUpdatingId(null);
-      return;
+      toast("Picked up. Enter pickup code at drop-off to confirm.", "success");
     }
-
-    if (newStatus === "delivered") {
-      setOtpOrderId(id);
-      setUpdatingId(null);
-      return;
-    }
-
-    await supabase.from("orders").update({ status: newStatus }).eq("id", id);
-    setDeliveries(p => p.map(d => d.id === id ? { ...d, status: newStatus } : d));
     setUpdatingId(null);
   };
 
-  const verifyOtpAndDeliver = async () => {
-    if (!otpOrderId || !otpInput) return;
-    setVerifyingOtp(true);
-    const { data: valid } = await supabase.rpc("verify_delivery_otp", { _order_id: otpOrderId, _otp: otpInput });
-    if (!valid) { toast("Invalid or expired OTP", "error"); setVerifyingOtp(false); return; }
-    await supabase.from("orders").update({ status: "delivered" }).eq("id", otpOrderId);
-    setDeliveries(p => p.map(d => d.id === otpOrderId ? { ...d, status: "delivered" } : d));
-    toast("Delivery confirmed! ✅", "success");
-    setOtpOrderId(null); setOtpInput(""); setVerifyingOtp(false);
-  };
-
-  const updateDispatch = async (id: string, status: string) => {
+  const acceptDispatch = async (id: string) => {
     setUpdatingId(id);
-    await supabase.from("dispatches").update({ status }).eq("id", id);
-    setDispatches(p => p.map(d => d.id === id ? { ...d, status } : d));
+    await supabase.from("dispatches").update({ status: "In Transit" }).eq("id", id);
+    setDispatches(p => p.map(d => d.id === id ? { ...d, status: "In Transit" } : d));
     setUpdatingId(null);
   };
+
+  const verifyCode = async () => {
+    if (!user || codeInput.trim().length < 4) { toast("Enter the full code", "error"); return; }
+    setVerifying(true);
+    const code = codeInput.trim().toUpperCase();
+    const { data, error } = await supabase.rpc("confirm_pickup_by_code", { _code: code, _rider_id: user.id });
+    setVerifying(false);
+    const r = data as any;
+    if (error || !r?.success) { toast(error?.message || r?.message || "Invalid code", "error"); return; }
+    toast(`Delivered to ${r.student_name || "recipient"} ✅`, "success");
+    setCodeOpen(false); setCodeInput("");
+    fetchData();
+  };
+
+  if (approved === null) return <div style={{ padding: 40, textAlign: "center" }}><Spinner /></div>;
+  if (!approved) return <RiderOnboarding onApproved={() => setApproved(true)} />;
 
   if (tab === "profile") return <ProfileScreen onLogout={onLogout} />;
   if (tab === "chat") return <ChatScreen />;
@@ -98,15 +99,21 @@ export function RiderApp({ tab, onLogout }: any) {
   // Rider Dashboard
   return (
     <div style={{ padding: "24px 16px", display: "flex", flexDirection: "column", gap: 20, animation: "fadeUp .4s ease", maxWidth: 800, margin: "0 auto", width: "100%" }}>
-      {otpOrderId && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => { setOtpOrderId(null); setOtpInput(""); }}>
+      {codeOpen && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => { setCodeOpen(false); setCodeInput(""); }}>
           <div onClick={e => e.stopPropagation()} style={{ ...card({ maxWidth: 380, width: "100%", textAlign: "center" }) }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>🔐</div>
-            <STitle>Enter Delivery OTP</STitle>
-            <div style={{ fontSize: 13, color: G.whiteDim, margin: "8px 0 16px" }}>Ask the student for their 6-digit delivery code</div>
-            <input style={{ ...inp({ textAlign: "center", fontSize: 24, fontFamily: "'DM Mono'", letterSpacing: "8px", marginBottom: 16 }) }} placeholder="000000" maxLength={6} value={otpInput} onChange={e => setOtpInput(e.target.value.replace(/\D/g, ""))} />
-            <button onClick={verifyOtpAndDeliver} disabled={verifyingOtp || otpInput.length !== 6} style={{ ...btn("gold", { width: "100%", padding: "14px", opacity: verifyingOtp || otpInput.length !== 6 ? .5 : 1 }) }}>
-              {verifyingOtp ? <><Spinner /> Verifying…</> : "Confirm Delivery ✓"}
+            <div style={{ fontSize: 48, marginBottom: 12 }}>🔑</div>
+            <STitle>Enter Pickup Code</STitle>
+            <div style={{ fontSize: 13, color: G.whiteDim, margin: "8px 0 16px" }}>Ask the recipient for their NexGo pickup code</div>
+            <input
+              style={{ ...inp({ textAlign: "center", fontSize: 20, fontFamily: "'DM Mono'", letterSpacing: "4px", marginBottom: 16, textTransform: "uppercase" as any }) }}
+              placeholder="NX-XXXXX"
+              value={codeInput}
+              onChange={e => setCodeInput(e.target.value.toUpperCase())}
+              maxLength={12}
+            />
+            <button onClick={verifyCode} disabled={verifying || codeInput.length < 4} style={{ ...btn("gold", { width: "100%", padding: "14px", opacity: verifying || codeInput.length < 4 ? .5 : 1 }) }}>
+              {verifying ? <><Spinner /> Verifying…</> : "Confirm Delivery ✓"}
             </button>
           </div>
         </div>
@@ -128,6 +135,9 @@ export function RiderApp({ tab, onLogout }: any) {
           </div>
         ))}
       </div>
+      <button onClick={() => setCodeOpen(true)} style={{ ...btn("gold", { padding: 14, fontSize: 14 }) }}>
+        🔑 Enter pickup code to confirm delivery
+      </button>
       <STitle>Active Orders</STitle>
       {deliveries.filter(d => !["delivered", "cancelled", "Done"].includes(d.status)).map((d: any) => (
         <div key={d.id} style={card({ border: `1.5px solid ${G.gold}` })}>
@@ -144,15 +154,15 @@ export function RiderApp({ tab, onLogout }: any) {
               </button>
             )}
             {d.status === "out_for_delivery" && (
-              <button onClick={() => updateOrder(d.id, "delivered")} disabled={updatingId === d.id} style={{ ...btn("gold", { padding: "8px 16px", fontSize: 13 }) }}>
-                🔐 Enter OTP to Deliver
+              <button onClick={() => setCodeOpen(true)} style={{ ...btn("gold", { padding: "8px 16px", fontSize: 13 }) }}>
+                🔑 Enter Code
               </button>
             )}
           </div>
         </div>
       ))}
       <STitle>Dispatch Pickups</STitle>
-      {dispatches.filter(d => d.status !== "Delivered" && d.status !== "Done").map((d: any) => (
+      {dispatches.filter(d => d.status !== "delivered" && d.status !== "Delivered" && d.status !== "Done").map((d: any) => (
         <div key={d.id} style={card()}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
             <span style={{ fontWeight: 700, color: G.white }}>{d.dispatch_number}</span><Badge status={d.status} />
@@ -160,9 +170,11 @@ export function RiderApp({ tab, onLogout }: any) {
           <div style={{ fontSize: 13, color: G.whiteDim }}>📍 {d.pickup_location} → {d.dropoff_location}</div>
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>
             <span style={{ color: G.gold, fontFamily: "'DM Mono'" }}>₦{d.fee}</span>
-            <button onClick={() => updateDispatch(d.id, d.status === "Pending" ? "In Transit" : "Delivered")} disabled={updatingId === d.id} style={{ ...btn("gold", { padding: "8px 16px", fontSize: 12, opacity: updatingId === d.id ? .5 : 1 }) }}>
-              {d.status === "Pending" ? "Accept" : "Complete"}
-            </button>
+            {d.status === "Pending" || d.status === "pending" ? (
+              <button onClick={() => acceptDispatch(d.id)} disabled={updatingId === d.id} style={{ ...btn("gold", { padding: "8px 16px", fontSize: 12 }) }}>Accept</button>
+            ) : (
+              <button onClick={() => setCodeOpen(true)} style={{ ...btn("gold", { padding: "8px 16px", fontSize: 12 }) }}>🔑 Enter Code</button>
+            )}
           </div>
         </div>
       ))}

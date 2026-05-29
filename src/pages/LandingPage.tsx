@@ -3,6 +3,7 @@ import { useNavigate } from "@/lib/router-compat";
 import { G, injectStyles, btn } from "@/lib/nexgo-theme";
 import NEXGO_LOGO from "@/assets/nexgo-logo.png";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NewsletterForm } from "@/components/nexgo/NewsletterForm";
 
 const FEATURES = [
   {
@@ -232,6 +233,17 @@ export default function LandingPage() {
             Create Free Account →
           </button>
         </div>
+      </section>
+
+      {/* ─── NEWSLETTER ─── */}
+      <section style={{ padding: "40px 20px", textAlign: "center", maxWidth: 700, margin: "0 auto" }}>
+        <h3 style={{ fontFamily: "'Cormorant Garamond'", fontSize: 24, fontWeight: 700, color: G.white, marginBottom: 8 }}>
+          Stay in the loop
+        </h3>
+        <p style={{ color: G.whiteDim, fontSize: 14, marginBottom: 20 }}>
+          Get NexGo updates, new vendors, and campus news.
+        </p>
+        <NewsletterForm />
       </section>
 
       {/* ─── FOOTER ─── */}

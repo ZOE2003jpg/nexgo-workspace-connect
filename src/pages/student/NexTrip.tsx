@@ -49,25 +49,36 @@ export function NexTrip({ wallet }: any) {
     <div style={{ padding: "24px 16px", animation: "fadeUp .4s ease", maxWidth: 800, margin: "0 auto", width: "100%" }}>
       <PHeader title="NexTrip" sub="Campus shuttle booking" icon="🚌" />
       <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 20 }}>
-        {routes.map((r: any) => (
-          <div key={r.id} onClick={() => setSel(r)} style={{ ...card({ cursor: "pointer", border: `1.5px solid ${sel?.id === r.id ? G.gold : G.b5}`, background: sel?.id === r.id ? G.goldGlow : G.b3, transition: "all .2s" }) }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-              <div>
-                <div style={{ fontWeight: 700, color: G.white, fontSize: 15 }}>{r.from_location}</div>
-                <div style={{ color: G.gold, fontSize: 22, margin: "4px 0" }}>↓</div>
-                <div style={{ fontWeight: 700, color: G.white, fontSize: 15 }}>{r.to_location}</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ color: G.gold, fontWeight: 700, fontFamily: "'DM Mono'", fontSize: 18 }}>₦{r.price}</div>
-                <div style={{ fontSize: 12, color: G.whiteDim, marginTop: 4 }}>🚌 {r.seats_available} seats left</div>
-                <div style={{ fontSize: 12, color: G.success, marginTop: 2 }}>Next: {r.next_departure}</div>
+        {routes.map((r: any) => {
+          const pub = r.price_public ?? r.price;
+          const priv = r.price_private;
+          return (
+            <div key={r.id} onClick={() => setSel(r)} style={{ ...card({ cursor: "pointer", border: `1.5px solid ${sel?.id === r.id ? G.gold : G.b5}`, background: sel?.id === r.id ? G.goldGlow : G.b3, transition: "all .2s" }) }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <div style={{ fontWeight: 700, color: G.white, fontSize: 15 }}>{r.from_location}</div>
+                  <div style={{ color: G.gold, fontSize: 22, margin: "4px 0" }}>↓</div>
+                  <div style={{ fontWeight: 700, color: G.white, fontSize: 15 }}>{r.to_location}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ color: G.gold, fontWeight: 700, fontFamily: "'DM Mono'", fontSize: 18 }}>₦{pub}</div>
+                  <div style={{ fontSize: 11, color: G.whiteDim }}>🚐 public</div>
+                  {priv && priv !== pub && (
+                    <>
+                      <div style={{ color: G.gold, fontWeight: 700, fontFamily: "'DM Mono'", fontSize: 14, marginTop: 4 }}>₦{priv}</div>
+                      <div style={{ fontSize: 11, color: G.whiteDim }}>🚗 private</div>
+                    </>
+                  )}
+                  <div style={{ fontSize: 12, color: G.whiteDim, marginTop: 6 }}>🚌 {r.seats_available} seats left</div>
+                  <div style={{ fontSize: 12, color: G.success, marginTop: 2 }}>Next: {r.next_departure}</div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       {sel && <button onClick={doBook} disabled={loading} style={{ ...btn("gold", { width: "100%", padding: "15px", borderRadius: 14, fontSize: 15, marginTop: 20, opacity: loading ? .7 : 1 }) }}>
-        {loading ? <Spinner /> : `Book Seat · ₦${sel.price} →`}
+        {loading ? <Spinner /> : `Book Seat · ₦${sel.price_public ?? sel.price} →`}
       </button>}
     </div>
   );
