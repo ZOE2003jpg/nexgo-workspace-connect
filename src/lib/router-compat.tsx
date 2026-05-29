@@ -48,7 +48,7 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(
         ref={ref as never}
         to={to as never}
         activeOptions={{ exact: !!end }}
-        {...(rest as never)}
+        {...(rest as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
       >
         {(state: { isActive: boolean }) => {
           const renderProps: NavLinkRenderProps = {
