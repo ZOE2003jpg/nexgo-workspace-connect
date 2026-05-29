@@ -8,6 +8,7 @@ import { ProfileScreen } from "@/pages/shared/ProfileScreen";
 
 function CreateRestaurant({ userId, onCreated }: { userId: string; onCreated: (r: any) => void }) {
   const [name, setName] = useState("");
+  const [category, setCategory] = useState<"food"|"market"|"supermarket"|"retail"|"container">("food");
   const [cuisine, setCuisine] = useState("Nigerian");
   const [deliveryTime, setDeliveryTime] = useState("20-30 min");
   const [priceRange, setPriceRange] = useState("₦500–₦3,000");
@@ -18,22 +19,30 @@ function CreateRestaurant({ userId, onCreated }: { userId: string; onCreated: (r
     if (!name.trim()) { toast("Enter restaurant name", "error"); return; }
     setSaving(true);
     const { data, error } = await supabase.from("restaurants").insert({
-      name: name.trim(), cuisine, delivery_time: deliveryTime, price_range: priceRange,
+      name: name.trim(), category, cuisine, delivery_time: deliveryTime, price_range: priceRange,
       image, owner_id: userId, is_open: true,
     }).select().single();
     setSaving(false);
     if (error) { toast("Failed: " + error.message, "error"); return; }
-    toast("Restaurant created! 🎉", "success");
+    toast("Vendor created! 🎉", "success");
     onCreated(data);
   };
 
   return (
     <div style={{ padding: "24px 16px", display: "flex", flexDirection: "column", gap: 16, animation: "fadeUp .4s ease", maxWidth: 600, margin: "0 auto", width: "100%" }}>
-      <PHeader title="Create Restaurant" sub="Set up your food business" icon="🏪" />
+      <PHeader title="Create Vendor" sub="Food, market, supermarket, retail or container" icon="🏪" />
       <div style={card({ display: "flex", flexDirection: "column", gap: 14 })}>
-        <Lbl>Restaurant Name</Lbl>
+        <Lbl>Vendor / Business Name</Lbl>
         <input style={inp()} value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Mama's Kitchen" />
-        <Lbl>Cuisine</Lbl>
+        <Lbl>Category</Lbl>
+        <select style={inp()} value={category} onChange={e => setCategory(e.target.value as any)}>
+          <option value="food">Food / Restaurant</option>
+          <option value="market">Market</option>
+          <option value="supermarket">Supermarket</option>
+          <option value="retail">Retail Shop</option>
+          <option value="container">Container Seller</option>
+        </select>
+        <Lbl>Cuisine / Sub-type</Lbl>
         <input style={inp()} value={cuisine} onChange={e => setCuisine(e.target.value)} placeholder="e.g. Nigerian" />
         <Lbl>Delivery Time</Lbl>
         <input style={inp()} value={deliveryTime} onChange={e => setDeliveryTime(e.target.value)} placeholder="e.g. 20-30 min" />

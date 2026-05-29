@@ -263,6 +263,7 @@ export type Database = {
       }
       restaurants: {
         Row: {
+          category: Database["public"]["Enums"]["vendor_category"]
           created_at: string
           cuisine: string
           delivery_time: string
@@ -276,6 +277,7 @@ export type Database = {
           tag: string | null
         }
         Insert: {
+          category?: Database["public"]["Enums"]["vendor_category"]
           created_at?: string
           cuisine?: string
           delivery_time?: string
@@ -289,6 +291,7 @@ export type Database = {
           tag?: string | null
         }
         Update: {
+          category?: Database["public"]["Enums"]["vendor_category"]
           created_at?: string
           cuisine?: string
           delivery_time?: string
@@ -506,6 +509,12 @@ export type Database = {
     }
     Enums: {
       app_role: "student" | "vendor" | "rider" | "admin"
+      vendor_category:
+        | "food"
+        | "market"
+        | "supermarket"
+        | "retail"
+        | "container"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -634,6 +643,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["student", "vendor", "rider", "admin"],
+      vendor_category: ["food", "market", "supermarket", "retail", "container"],
     },
   },
 } as const
