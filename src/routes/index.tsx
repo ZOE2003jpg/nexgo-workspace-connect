@@ -1,23 +1,29 @@
 import { createFileRoute } from "@tanstack/react-router";
-import LandingPage from "@/pages/LandingPage";
-import { RedirectIfAuth } from "@/components/RouteGuards";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "NexGo — Your Campus, Supercharged" },
-      { name: "description", content: "Order food, send packages, and book campus rides — all in one app for Nigerian university students, vendors, and riders." },
-      { property: "og:title", content: "NexGo — Your Campus, Supercharged" },
-      { property: "og:description", content: "Order food, send packages, and book campus rides — all in one app for Nigerian university students, vendors, and riders." },
+      { title: "Your App" },
+      { name: "description", content: "Replace this with a one-sentence description of your app." },
+      { property: "og:title", content: "Your App" },
+      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
     ],
   }),
-  component: Home,
+  component: Index,
 });
 
-function Home() {
+// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
+function Index() {
   return (
-    <RedirectIfAuth>
-      <LandingPage />
-    </RedirectIfAuth>
+    <div
+      className="flex min-h-screen items-center justify-center"
+      style={{ backgroundColor: "#fcfbf8" }}
+    >
+      <img
+        data-lovable-blank-page-placeholder="REMOVE_THIS"
+        src="https://cdn.gpteng.co/blank-app-v1.svg"
+        alt="Your app will live here!"
+      />
+    </div>
   );
 }
