@@ -5,7 +5,7 @@ import type { User, Session } from "@supabase/supabase-js";
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  profile: { full_name: string; email: string; avatar_url: string | null } | null;
+  profile: { full_name: string | null; email: string | null; avatar_url: string | null } | null;
   role: string | null;
   walletBalance: number;
   loading: boolean;

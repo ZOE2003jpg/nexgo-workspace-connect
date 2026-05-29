@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@/lib/router-compat";
 import { G, injectStyles, btn } from "@/lib/nexgo-theme";
 import NEXGO_LOGO from "@/assets/nexgo-logo.png";
 

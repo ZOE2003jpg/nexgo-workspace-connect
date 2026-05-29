@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@/lib/router-compat";
 import { useAuth } from "@/hooks/useAuth";
 import { G, injectStyles } from "@/lib/nexgo-theme";
 import { Spinner } from "@/components/nexgo/SharedUI";
