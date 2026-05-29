@@ -14,51 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      conversations: {
-        Row: {
-          created_at: string
-          id: string
-          kind: string
-          ref_id: string
-          rider_id: string | null
-          student_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          kind: string
-          ref_id: string
-          rider_id?: string | null
-          student_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          kind?: string
-          ref_id?: string
-          rider_id?: string | null
-          student_id?: string
-        }
-        Relationships: []
-      }
-      dispatch_pickup_codes: {
-        Row: {
-          code: string
-          created_at: string
-          dispatch_id: string
-        }
-        Insert: {
-          code: string
-          created_at?: string
-          dispatch_id: string
-        }
-        Update: {
-          code?: string
-          created_at?: string
-          dispatch_id?: string
-        }
-        Relationships: []
-      }
       dispatches: {
         Row: {
           created_at: string
@@ -139,87 +94,6 @@ export type Database = {
           },
         ]
       }
-      messages: {
-        Row: {
-          body: string
-          conversation_id: string
-          created_at: string
-          id: string
-          sender_id: string
-        }
-        Insert: {
-          body: string
-          conversation_id: string
-          created_at?: string
-          id?: string
-          sender_id: string
-        }
-        Update: {
-          body?: string
-          conversation_id?: string
-          created_at?: string
-          id?: string
-          sender_id?: string
-        }
-        Relationships: []
-      }
-      newsletter_subscribers: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          subscribed: boolean
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          subscribed?: boolean
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          subscribed?: boolean
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      notifications: {
-        Row: {
-          body: string | null
-          created_at: string
-          data: Json | null
-          id: string
-          read_at: string | null
-          title: string
-          type: string
-          user_id: string
-        }
-        Insert: {
-          body?: string | null
-          created_at?: string
-          data?: Json | null
-          id?: string
-          read_at?: string | null
-          title: string
-          type: string
-          user_id: string
-        }
-        Update: {
-          body?: string | null
-          created_at?: string
-          data?: Json | null
-          id?: string
-          read_at?: string | null
-          title?: string
-          type?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       order_items: {
         Row: {
           id: string
@@ -261,24 +135,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      order_pickup_codes: {
-        Row: {
-          code: string
-          created_at: string
-          order_id: string
-        }
-        Insert: {
-          code: string
-          created_at?: string
-          order_id: string
-        }
-        Update: {
-          code?: string
-          created_at?: string
-          order_id?: string
-        }
-        Relationships: []
       }
       orders: {
         Row: {
@@ -385,7 +241,6 @@ export type Database = {
           email: string | null
           full_name: string
           id: string
-          phone: string | null
           updated_at: string
         }
         Insert: {
@@ -394,7 +249,6 @@ export type Database = {
           email?: string | null
           full_name?: string
           id: string
-          phone?: string | null
           updated_at?: string
         }
         Update: {
@@ -403,7 +257,6 @@ export type Database = {
           email?: string | null
           full_name?: string
           id?: string
-          phone?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -453,75 +306,6 @@ export type Database = {
         }
         Relationships: []
       }
-      rider_documents: {
-        Row: {
-          created_at: string
-          doc_type: string
-          file_path: string
-          id: string
-          notes: string | null
-          reviewer_id: string | null
-          rider_id: string
-          status: string
-        }
-        Insert: {
-          created_at?: string
-          doc_type: string
-          file_path: string
-          id?: string
-          notes?: string | null
-          reviewer_id?: string | null
-          rider_id: string
-          status?: string
-        }
-        Update: {
-          created_at?: string
-          doc_type?: string
-          file_path?: string
-          id?: string
-          notes?: string | null
-          reviewer_id?: string | null
-          rider_id?: string
-          status?: string
-        }
-        Relationships: []
-      }
-      rider_profiles: {
-        Row: {
-          approved: boolean
-          created_at: string
-          full_name: string | null
-          phone: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
-          updated_at: string
-          user_id: string
-          vehicle: string | null
-        }
-        Insert: {
-          approved?: boolean
-          created_at?: string
-          full_name?: string | null
-          phone?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          updated_at?: string
-          user_id: string
-          vehicle?: string | null
-        }
-        Update: {
-          approved?: boolean
-          created_at?: string
-          full_name?: string | null
-          phone?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          updated_at?: string
-          user_id?: string
-          vehicle?: string | null
-        }
-        Relationships: []
-      }
       trip_bookings: {
         Row: {
           boarding_code: string
@@ -564,11 +348,8 @@ export type Database = {
           id: string
           next_departure: string | null
           price: number
-          price_private: number | null
-          price_public: number | null
           seats_available: number
           to_location: string
-          vehicle_type: string
         }
         Insert: {
           active?: boolean
@@ -576,11 +357,8 @@ export type Database = {
           id?: string
           next_departure?: string | null
           price: number
-          price_private?: number | null
-          price_public?: number | null
           seats_available?: number
           to_location: string
-          vehicle_type?: string
         }
         Update: {
           active?: boolean
@@ -588,11 +366,8 @@ export type Database = {
           id?: string
           next_departure?: string | null
           price?: number
-          price_private?: number | null
-          price_public?: number | null
           seats_available?: number
           to_location?: string
-          vehicle_type?: string
         }
         Relationships: []
       }
@@ -682,10 +457,6 @@ export type Database = {
         Args: { _order_id: string; _rider_id: string }
         Returns: Json
       }
-      admin_set_rider_approval: {
-        Args: { _admin_id: string; _approved: boolean; _rider_id: string }
-        Returns: Json
-      }
       admin_set_user_role: {
         Args: {
           _admin_id: string
@@ -698,10 +469,6 @@ export type Database = {
         Args: { _admin_id: string; _key: string; _value: number }
         Returns: Json
       }
-      confirm_pickup_by_code: {
-        Args: { _code: string; _rider_id: string }
-        Returns: Json
-      }
       deduct_wallet: {
         Args: {
           _amount: number
@@ -712,7 +479,6 @@ export type Database = {
         Returns: Json
       }
       generate_delivery_otp: { Args: { _order_id: string }; Returns: string }
-      generate_pickup_code: { Args: never; Returns: string }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -742,7 +508,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "student" | "vendor" | "rider" | "admin" | "school"
+      app_role: "student" | "vendor" | "rider" | "admin"
       vendor_category:
         | "food"
         | "market"
@@ -876,7 +642,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["student", "vendor", "rider", "admin", "school"],
+      app_role: ["student", "vendor", "rider", "admin"],
       vendor_category: ["food", "market", "supermarket", "retail", "container"],
     },
   },
