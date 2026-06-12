@@ -6,7 +6,8 @@ export const initializeKorapayPayment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { amount: number; purpose?: "wallet" | "order"; orderId?: string }) => {
     if (!input || typeof input.amount !== "number") throw new Error("Invalid amount");
-    if (input.amount <= 0 || input.amount > 10_000_000) throw new Error("Amount out of range");
+    if (input.amount < 100) throw new Error("Minimum deposit is ₦100");
+    if (input.amount > 10_000_000) throw new Error("Amount out of range");
     return {
       amount: Math.floor(input.amount),
       purpose: input.purpose === "order" ? "order" : "wallet",
