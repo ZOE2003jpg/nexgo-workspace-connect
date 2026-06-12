@@ -45,7 +45,7 @@ export const initializeKorapayPayment = createServerFn({ method: "POST" })
       metadata: {
         user_id: userId,
         purpose: data.purpose,
-        order_id: data.orderId ?? null,
+        ...(data.orderId ? { order_id: data.orderId } : {}),
       },
     };
 
