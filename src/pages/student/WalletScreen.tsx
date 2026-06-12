@@ -11,19 +11,33 @@ export function WalletScreen({ wallet }: any) {
   const { user, profile, refreshWallet } = useAuth();
   const [amt, setAmt] = useState("");
   const [txns, setTxns] = useState<any[]>([]);
+  const [deposits, setDeposits] = useState<any[]>([]);
   const [funding, setFunding] = useState(false);
   const initPay = useServerFn(initializeKorapayPayment);
 
-  useEffect(() => {
+  const loadHistory = () => {
     if (!user) return;
     supabase.from("wallet_transactions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20)
       .then(({ data }) => { if (data) setTxns(data); });
-  }, [user, wallet]);
+    supabase.from("deposits").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20)
+      .then(({ data }) => { if (data) setDeposits(data); });
+  };
+
+  useEffect(() => { loadHistory(); }, [user, wallet]);
+
+  // Auto-refresh while a pending deposit exists so the webhook update appears without manual refresh
+  useEffect(() => {
+    if (!user) return;
+    const hasPending = deposits.some((d) => d.status === "pending");
+    if (!hasPending) return;
+    const t = setInterval(() => { loadHistory(); refreshWallet(); }, 5000);
+    return () => clearInterval(t);
+  }, [deposits, user]);
 
   const fund = async () => {
     if (!user) return;
     const v = parseInt(amt);
-    if (isNaN(v) || v <= 0) { toast("Enter a valid amount", "error"); return; }
+    if (isNaN(v) || v < 100) { toast("Minimum deposit is ₦100", "error"); return; }
 
     setFunding(true);
     try {
@@ -32,6 +46,7 @@ export function WalletScreen({ wallet }: any) {
       if (!res?.checkout_url) { toast("Payment initialization failed", "error"); return; }
       window.open(res.checkout_url, "_blank");
       toast("Complete payment in the new tab. Your wallet will update automatically.", "info");
+      loadHistory();
     } catch (e: any) {
       setFunding(false);
       toast(e?.message || "Payment initialization failed", "error");
@@ -54,11 +69,31 @@ export function WalletScreen({ wallet }: any) {
             <button key={v} onClick={() => setAmt(String(v))} style={{ padding: "8px 14px", borderRadius: 20, fontSize: 13, fontWeight: 600, background: amt === String(v) ? G.goldGlow : G.b4, border: `1px solid ${amt === String(v) ? G.gold : G.b5}`, color: amt === String(v) ? G.gold : G.whiteDim, cursor: "pointer", transition: "all .2s" }}>₦{v.toLocaleString()}</button>
           ))}
         </div>
-        <input style={{ ...inp({ marginBottom: 12 }) }} type="number" placeholder="Enter amount…" value={amt} onChange={e => setAmt(e.target.value)} />
+        <input style={{ ...inp({ marginBottom: 8 }) }} type="number" min={100} placeholder="Enter amount (min ₦100)…" value={amt} onChange={e => setAmt(e.target.value)} />
+        <div style={{ fontSize: 11, color: G.whiteDim, marginBottom: 12 }}>Minimum deposit is ₦100</div>
         <button onClick={fund} disabled={funding} style={{ ...btn("gold", { width: "100%", padding: "13px", opacity: funding ? .6 : 1 }) }}>
           {funding ? <><Spinner /> Connecting…</> : "Pay with KoraPay →"}
         </button>
       </div>
+      {deposits.filter((d: any) => d.status !== "completed").length > 0 && (
+        <div>
+          <STitle>Pending Deposits</STitle>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 12 }}>
+            {deposits.filter((d: any) => d.status !== "completed").map((d: any) => (
+              <div key={d.id} style={card({ display: "flex", justifyContent: "space-between", alignItems: "center" })}>
+                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                  <div style={{ width: 40, height: 40, borderRadius: "50%", background: G.b4, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>⏳</div>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: 13, color: G.white }}>Korapay Deposit</div>
+                    <div style={{ fontSize: 11, color: G.whiteDim }}>{d.reference} · {d.status}</div>
+                  </div>
+                </div>
+                <div style={{ fontWeight: 700, fontFamily: "'DM Mono'", fontSize: 14, color: G.gold }}>₦{d.amount.toLocaleString()}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div>
         <STitle>Transactions</STitle>
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 12 }}>

@@ -6,7 +6,8 @@ export const initializeKorapayPayment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { amount: number; purpose?: "wallet" | "order"; orderId?: string }) => {
     if (!input || typeof input.amount !== "number") throw new Error("Invalid amount");
-    if (input.amount <= 0 || input.amount > 10_000_000) throw new Error("Amount out of range");
+    if (input.amount < 100) throw new Error("Minimum deposit is ₦100");
+    if (input.amount > 10_000_000) throw new Error("Amount out of range");
     return {
       amount: Math.floor(input.amount),
       purpose: input.purpose === "order" ? "order" : "wallet",
@@ -62,6 +63,18 @@ export const initializeKorapayPayment = createServerFn({ method: "POST" })
     if (!res.ok || !json?.status || !json?.data?.checkout_url) {
       console.error("[Korapay] init failed", json);
       throw new Error(json?.message || "Korapay initialization failed");
+    }
+
+    // Record pending deposit (wallet only) so user sees it before webhook fires
+    if (data.purpose === "wallet") {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin.from("deposits").insert({
+        user_id: userId,
+        reference: json.data.reference,
+        amount: data.amount,
+        status: "pending",
+        purpose: "wallet",
+      });
     }
 
     return {
