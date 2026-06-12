@@ -1,12 +1,15 @@
 import { useState, useRef } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { G, btn, card, inp } from "@/lib/nexgo-theme";
 import { STitle, PHeader, Spinner } from "@/components/nexgo/SharedUI";
 import { toast } from "@/components/nexgo/ToastContainer";
+import { initializeKorapayPayment } from "@/lib/korapay.functions";
 
 export function Checkout({ cart, setCart, wallet, onBack, onDone, restaurantId }: any) {
   const { user, refreshWallet } = useAuth();
+  const initPay = useServerFn(initializeKorapayPayment);
   const [pay, setPay] = useState("wallet");
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,11 +45,15 @@ export function Checkout({ cart, setCart, wallet, onBack, onDone, restaurantId }
     // For transfer: initialize payment first
     let payRef: string | null = null;
     if (pay === "transfer") {
-      const { data, error: payErr } = await supabase.functions.invoke("initialize-payment", { body: { amount: total } });
-      if (payErr || !data?.checkout_url) { toast("Payment failed to initialize", "error"); setLoading(false); placedRef.current = false; return; }
-      payRef = data.reference;
-      window.open(data.checkout_url, "_blank");
-      toast("Complete payment in the new tab", "info");
+      try {
+        const res = await initPay({ data: { amount: total, purpose: "order" } });
+        if (!res?.checkout_url) { toast("Payment failed to initialize", "error"); setLoading(false); placedRef.current = false; return; }
+        payRef = res.reference;
+        window.open(res.checkout_url, "_blank");
+        toast("Complete payment in the new tab", "info");
+      } catch (e: any) {
+        toast(e?.message || "Payment failed to initialize", "error"); setLoading(false); placedRef.current = false; return;
+      }
     }
 
     const { data: order, error } = await supabase.from("orders").insert({

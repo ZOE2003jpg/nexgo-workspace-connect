@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { G, btn, card, inp } from "@/lib/nexgo-theme";
 import { STitle, PHeader, Spinner } from "@/components/nexgo/SharedUI";
 import { toast } from "@/components/nexgo/ToastContainer";
+import { initializeKorapayPayment } from "@/lib/korapay.functions";
 
 export function WalletScreen({ wallet }: any) {
   const { user, profile, refreshWallet } = useAuth();
   const [amt, setAmt] = useState("");
   const [txns, setTxns] = useState<any[]>([]);
   const [funding, setFunding] = useState(false);
+  const initPay = useServerFn(initializeKorapayPayment);
 
   useEffect(() => {
     if (!user) return;
@@ -23,11 +26,16 @@ export function WalletScreen({ wallet }: any) {
     if (isNaN(v) || v <= 0) { toast("Enter a valid amount", "error"); return; }
 
     setFunding(true);
-    const { data, error } = await supabase.functions.invoke("initialize-payment", { body: { amount: v } });
-    setFunding(false);
-    if (error || !data?.checkout_url) { toast("Payment initialization failed", "error"); return; }
-    window.open(data.checkout_url, "_blank");
-    toast("Complete payment in the new tab. Your wallet will update automatically.", "info");
+    try {
+      const res = await initPay({ data: { amount: v, purpose: "wallet" } });
+      setFunding(false);
+      if (!res?.checkout_url) { toast("Payment initialization failed", "error"); return; }
+      window.open(res.checkout_url, "_blank");
+      toast("Complete payment in the new tab. Your wallet will update automatically.", "info");
+    } catch (e: any) {
+      setFunding(false);
+      toast(e?.message || "Payment initialization failed", "error");
+    }
   };
 
   return (

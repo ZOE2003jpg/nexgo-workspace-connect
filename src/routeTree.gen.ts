@@ -14,6 +14,7 @@ import { Route as SigninRouteImport } from './routes/signin'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicKorapayWebhookRouteImport } from './routes/api/public/korapay-webhook'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -40,6 +41,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicKorapayWebhookRoute = ApiPublicKorapayWebhookRouteImport.update({
+  id: '/api/public/korapay-webhook',
+  path: '/api/public/korapay-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/api/public/korapay-webhook': typeof ApiPublicKorapayWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/api/public/korapay-webhook': typeof ApiPublicKorapayWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,33 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/api/public/korapay-webhook': typeof ApiPublicKorapayWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/reset-password' | '/signin' | '/signup'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/reset-password'
+    | '/signin'
+    | '/signup'
+    | '/api/public/korapay-webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app' | '/reset-password' | '/signin' | '/signup'
-  id: '__root__' | '/' | '/app' | '/reset-password' | '/signin' | '/signup'
+  to:
+    | '/'
+    | '/app'
+    | '/reset-password'
+    | '/signin'
+    | '/signup'
+    | '/api/public/korapay-webhook'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/reset-password'
+    | '/signin'
+    | '/signup'
+    | '/api/public/korapay-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +105,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
+  ApiPublicKorapayWebhookRoute: typeof ApiPublicKorapayWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/korapay-webhook': {
+      id: '/api/public/korapay-webhook'
+      path: '/api/public/korapay-webhook'
+      fullPath: '/api/public/korapay-webhook'
+      preLoaderRoute: typeof ApiPublicKorapayWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  ApiPublicKorapayWebhookRoute: ApiPublicKorapayWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
