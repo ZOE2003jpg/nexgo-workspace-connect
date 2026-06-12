@@ -1,0 +1,1 @@
+CREATE POLICY "Users insert own deposits" ON public.deposits FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
