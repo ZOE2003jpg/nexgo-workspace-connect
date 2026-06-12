@@ -84,6 +84,11 @@ export const Route = createFileRoute("/api/public/korapay-webhook")({
             .eq("label", "Wallet Top-up")
             .order("created_at", { ascending: false })
             .limit(1);
+          // Mark the deposit row completed
+          await supabaseAdmin
+            .from("deposits")
+            .update({ status: "completed", updated_at: new Date().toISOString() })
+            .eq("reference", reference);
           console.log("[Korapay webhook] credited", { userId, amount, reference, result });
         } else if (purpose === "order") {
           // Mark the order as paid
