@@ -65,6 +65,18 @@ export const initializeKorapayPayment = createServerFn({ method: "POST" })
       throw new Error(json?.message || "Korapay initialization failed");
     }
 
+    // Record pending deposit (wallet only) so user sees it before webhook fires
+    if (data.purpose === "wallet") {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin.from("deposits").insert({
+        user_id: userId,
+        reference: json.data.reference,
+        amount: data.amount,
+        status: "pending",
+        purpose: "wallet",
+      });
+    }
+
     return {
       checkout_url: json.data.checkout_url as string,
       reference: json.data.reference as string,
