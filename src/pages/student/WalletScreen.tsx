@@ -11,19 +11,33 @@ export function WalletScreen({ wallet }: any) {
   const { user, profile, refreshWallet } = useAuth();
   const [amt, setAmt] = useState("");
   const [txns, setTxns] = useState<any[]>([]);
+  const [deposits, setDeposits] = useState<any[]>([]);
   const [funding, setFunding] = useState(false);
   const initPay = useServerFn(initializeKorapayPayment);
 
-  useEffect(() => {
+  const loadHistory = () => {
     if (!user) return;
     supabase.from("wallet_transactions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20)
       .then(({ data }) => { if (data) setTxns(data); });
-  }, [user, wallet]);
+    supabase.from("deposits").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(20)
+      .then(({ data }) => { if (data) setDeposits(data); });
+  };
+
+  useEffect(() => { loadHistory(); }, [user, wallet]);
+
+  // Auto-refresh while a pending deposit exists so the webhook update appears without manual refresh
+  useEffect(() => {
+    if (!user) return;
+    const hasPending = deposits.some((d) => d.status === "pending");
+    if (!hasPending) return;
+    const t = setInterval(() => { loadHistory(); refreshWallet(); }, 5000);
+    return () => clearInterval(t);
+  }, [deposits, user]);
 
   const fund = async () => {
     if (!user) return;
     const v = parseInt(amt);
-    if (isNaN(v) || v <= 0) { toast("Enter a valid amount", "error"); return; }
+    if (isNaN(v) || v < 100) { toast("Minimum deposit is ₦100", "error"); return; }
 
     setFunding(true);
     try {
@@ -32,6 +46,7 @@ export function WalletScreen({ wallet }: any) {
       if (!res?.checkout_url) { toast("Payment initialization failed", "error"); return; }
       window.open(res.checkout_url, "_blank");
       toast("Complete payment in the new tab. Your wallet will update automatically.", "info");
+      loadHistory();
     } catch (e: any) {
       setFunding(false);
       toast(e?.message || "Payment initialization failed", "error");
