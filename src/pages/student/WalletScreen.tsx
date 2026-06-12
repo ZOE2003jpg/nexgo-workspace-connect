@@ -69,11 +69,31 @@ export function WalletScreen({ wallet }: any) {
             <button key={v} onClick={() => setAmt(String(v))} style={{ padding: "8px 14px", borderRadius: 20, fontSize: 13, fontWeight: 600, background: amt === String(v) ? G.goldGlow : G.b4, border: `1px solid ${amt === String(v) ? G.gold : G.b5}`, color: amt === String(v) ? G.gold : G.whiteDim, cursor: "pointer", transition: "all .2s" }}>₦{v.toLocaleString()}</button>
           ))}
         </div>
-        <input style={{ ...inp({ marginBottom: 12 }) }} type="number" placeholder="Enter amount…" value={amt} onChange={e => setAmt(e.target.value)} />
+        <input style={{ ...inp({ marginBottom: 8 }) }} type="number" min={100} placeholder="Enter amount (min ₦100)…" value={amt} onChange={e => setAmt(e.target.value)} />
+        <div style={{ fontSize: 11, color: G.whiteDim, marginBottom: 12 }}>Minimum deposit is ₦100</div>
         <button onClick={fund} disabled={funding} style={{ ...btn("gold", { width: "100%", padding: "13px", opacity: funding ? .6 : 1 }) }}>
           {funding ? <><Spinner /> Connecting…</> : "Pay with KoraPay →"}
         </button>
       </div>
+      {deposits.filter((d: any) => d.status !== "completed").length > 0 && (
+        <div>
+          <STitle>Pending Deposits</STitle>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 12 }}>
+            {deposits.filter((d: any) => d.status !== "completed").map((d: any) => (
+              <div key={d.id} style={card({ display: "flex", justifyContent: "space-between", alignItems: "center" })}>
+                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                  <div style={{ width: 40, height: 40, borderRadius: "50%", background: G.b4, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>⏳</div>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: 13, color: G.white }}>Korapay Deposit</div>
+                    <div style={{ fontSize: 11, color: G.whiteDim }}>{d.reference} · {d.status}</div>
+                  </div>
+                </div>
+                <div style={{ fontWeight: 700, fontFamily: "'DM Mono'", fontSize: 14, color: G.gold }}>₦{d.amount.toLocaleString()}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div>
         <STitle>Transactions</STitle>
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 12 }}>
