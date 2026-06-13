@@ -30,8 +30,9 @@ export const initializeKorapayPayment = createServerFn({ method: "POST" })
     const reference = `NX-${data.purpose === "order" ? "ORD" : "WAL"}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`.toUpperCase();
 
     // Stable public URLs for webhook + redirect (do NOT change if project is renamed)
+    // Use the -dev host so webhooks work before the project is published.
     const projectId = "3aeaa6c0-4753-4df4-8c93-d01eb49264e1";
-    const baseUrl = `https://project--${projectId}.lovable.app`;
+    const baseUrl = `https://project--${projectId}-dev.lovable.app`;
 
     const body = {
       amount: data.amount,
