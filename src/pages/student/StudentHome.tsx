@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { UtensilsCrossed, Package, Bus, Sparkles, AlertTriangle, Search, Hand } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { G, btn, card, inp } from "@/lib/nexgo-theme";
@@ -71,7 +72,10 @@ export function StudentHome({ wallet, setTab, profile }: any) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
           <div style={{ color: G.whiteDim, fontSize: 13 }}>{greeting},</div>
-          <div style={{ fontFamily: "'Cormorant Garamond'", fontSize: 34, fontWeight: 700, color: G.white, lineHeight: 1.1 }}>{firstName} 👋</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'Cormorant Garamond'", fontSize: 34, fontWeight: 700, color: G.white, lineHeight: 1.1 }}>
+            <span>{firstName}</span>
+            <Hand size={26} color={G.gold} style={{ transform: "rotate(20deg)" }} />
+          </div>
         </div>
         <div onClick={() => setTab("wallet")} style={{ background: G.b3, border: `1px solid ${G.b5}`, borderRadius: 12, padding: "10px 16px", textAlign: "right", cursor: "pointer" }}>
           <div style={{ fontSize: 10, color: G.whiteDim, letterSpacing: ".05em" }}>WALLET</div>
@@ -80,16 +84,20 @@ export function StudentHome({ wallet, setTab, profile }: any) {
       </div>
       <div onClick={() => setTab("chow")} style={{ background: `linear-gradient(135deg,${G.goldDark},${G.gold})`, borderRadius: 20, padding: "26px 22px", position: "relative", overflow: "hidden", cursor: "pointer" }}>
         <div style={{ position: "absolute", right: -30, top: -30, width: 140, height: 140, borderRadius: "50%", background: "rgba(255,255,255,0.08)" }} />
-        <div style={{ fontSize: 11, fontWeight: 700, color: G.black, opacity: 0.7, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 8 }}>🎉 Today Only</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontWeight: 700, color: G.black, opacity: 0.75, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 8 }}>
+          <Sparkles size={13} /> Today Only
+        </div>
         <div style={{ fontSize: 22, fontWeight: 700, color: G.black, marginBottom: 6 }}>Free delivery on NexChow!</div>
         <div style={{ fontSize: 13, color: G.black, opacity: 0.7 }}>Order any meal, zero delivery fee</div>
       </div>
       <div>
         <STitle>Quick Actions</STitle>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginTop: 12 }}>
-          {[{ icon: "🍽️", label: "NexChow", sub: "Food & drinks", tab: "chow" }, { icon: "📦", label: "Dispatch", sub: "Send packages", tab: "dispatch" }, { icon: "🚌", label: "NexTrip", sub: "Campus rides", tab: "trip" }].map((a: any) => (
+          {[{ Icon: UtensilsCrossed, label: "NexChow", sub: "Food & drinks", tab: "chow" }, { Icon: Package, label: "Dispatch", sub: "Send packages", tab: "dispatch" }, { Icon: Bus, label: "NexTrip", sub: "Campus rides", tab: "trip" }].map((a: any) => (
             <div key={a.label} onClick={() => setTab(a.tab)} className="hover-gold" style={{ ...card({ textAlign: "center", cursor: "pointer", padding: 16, transition: "all .2s" }) }}>
-              <div style={{ fontSize: 30, marginBottom: 6 }}>{a.icon}</div>
+              <div style={{ width: 44, height: 44, margin: "0 auto 8px", borderRadius: 12, background: `linear-gradient(135deg,${G.goldGlow},transparent)`, border: `1px solid ${G.goldBorder}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <a.Icon size={22} color={G.gold} strokeWidth={1.6} />
+              </div>
               <div style={{ fontWeight: 700, fontSize: 13, color: G.white }}>{a.label}</div>
               <div style={{ fontSize: 11, color: G.whiteDim, marginTop: 3 }}>{a.sub}</div>
             </div>
@@ -124,11 +132,11 @@ export function StudentHome({ wallet, setTab, profile }: any) {
                   const ageMs = Date.now() - new Date(o.created_at).getTime();
                   return ageMs <= 30 * 60 * 1000;
                 })() && (
-                    <button onClick={(e) => { e.stopPropagation(); setDisputeId(o.id); }} style={{ ...btn("ghost", { padding: "6px 12px", fontSize: 12, color: "#E8A030", border: "1px solid rgba(232,160,48,0.4)" }) }}>
-                      ⚠️ Dispute
+                    <button onClick={(e) => { e.stopPropagation(); setDisputeId(o.id); }} style={{ ...btn("ghost", { padding: "6px 12px", fontSize: 12, color: "#E8A030", border: "1px solid rgba(232,160,48,0.4)", gap: 4 }) }}>
+                      <AlertTriangle size={12} /> Dispute
                     </button>
                   )}
-                {o.status === "under_review" && <span style={{ fontSize: 11, color: "#E8A030", fontWeight: 600 }}>🔍 Under Review</span>}
+                {o.status === "under_review" && <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, color: "#E8A030", fontWeight: 600 }}><Search size={11} /> Under Review</span>}
               </div>
             </div>
           ))}

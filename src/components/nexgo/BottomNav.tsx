@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Home, UtensilsCrossed, Wallet, User, Package, Bus, MessageCircle, LayoutDashboard, ListOrdered, BookOpen, BarChart3, Users, Bike, Settings, Building2 } from "lucide-react";
 import { G } from "@/lib/nexgo-theme";
 import NEXGO_LOGO from "@/assets/nexgo-logo.png";
 
@@ -6,40 +7,45 @@ export function BottomNav({ role, tab, setTab, cartCount }: any) {
   const [showMore, setShowMore] = useState(false);
   const cfg: any = {
     student: {
-      left: [{ id: "home", icon: "⊞", label: "Home" }, { id: "chow", icon: "🍽️", label: "NexChow" }],
-      right: [{ id: "wallet", icon: "💳", label: "Wallet" }, { id: "profile", icon: "👤", label: "Profile" }],
-      more: [{ id: "dispatch", icon: "📦", label: "Dispatch" }, { id: "trip", icon: "🚌", label: "NexTrip" }, { id: "chat", icon: "💬", label: "Support" }],
+      left: [{ id: "home", Icon: Home, label: "Home" }, { id: "chow", Icon: UtensilsCrossed, label: "NexChow" }],
+      right: [{ id: "wallet", Icon: Wallet, label: "Wallet" }, { id: "profile", Icon: User, label: "Profile" }],
+      more: [{ id: "dispatch", Icon: Package, label: "Dispatch" }, { id: "trip", Icon: Bus, label: "NexTrip" }, { id: "chat", Icon: MessageCircle, label: "Support" }],
     },
     vendor: {
-      left: [{ id: "dashboard", icon: "📊", label: "Dashboard" }, { id: "orders", icon: "📦", label: "Orders" }],
-      right: [{ id: "menu", icon: "🍽️", label: "Menu" }, { id: "profile", icon: "👤", label: "Profile" }],
-      more: [{ id: "earnings", icon: "💳", label: "Earnings" }, { id: "chat", icon: "💬", label: "Support" }],
+      left: [{ id: "dashboard", Icon: LayoutDashboard, label: "Dashboard" }, { id: "orders", Icon: Package, label: "Orders" }],
+      right: [{ id: "menu", Icon: BookOpen, label: "Menu" }, { id: "profile", Icon: User, label: "Profile" }],
+      more: [{ id: "earnings", Icon: Wallet, label: "Earnings" }, { id: "chat", Icon: MessageCircle, label: "Support" }],
     },
     rider: {
-      left: [{ id: "rdashboard", icon: "📊", label: "Dashboard" }, { id: "deliveries", icon: "🏍️", label: "Active" }],
-      right: [{ id: "earnings", icon: "💳", label: "Earnings" }, { id: "profile", icon: "👤", label: "Profile" }],
-      more: [{ id: "chat", icon: "💬", label: "Support" }],
+      left: [{ id: "rdashboard", Icon: LayoutDashboard, label: "Dashboard" }, { id: "deliveries", Icon: Bike, label: "Active" }],
+      right: [{ id: "earnings", Icon: Wallet, label: "Earnings" }, { id: "profile", Icon: User, label: "Profile" }],
+      more: [{ id: "chat", Icon: MessageCircle, label: "Support" }],
     },
     admin: {
-      left: [{ id: "adashboard", icon: "📊", label: "Dashboard" }, { id: "users", icon: "👥", label: "Users" }],
-      right: [{ id: "riders", icon: "🏍️", label: "Riders" }, { id: "profile", icon: "👤", label: "Profile" }],
-      more: [{ id: "restaurants", icon: "🍽️", label: "Restaurants" }, { id: "orders", icon: "📦", label: "Orders" }, { id: "settings", icon: "⚙️", label: "Settings" }, { id: "analytics", icon: "📈", label: "Analytics" }],
+      left: [{ id: "adashboard", Icon: LayoutDashboard, label: "Dashboard" }, { id: "users", Icon: Users, label: "Users" }],
+      right: [{ id: "riders", Icon: Bike, label: "Riders" }, { id: "profile", Icon: User, label: "Profile" }],
+      more: [{ id: "restaurants", Icon: UtensilsCrossed, label: "Restaurants" }, { id: "orders", Icon: ListOrdered, label: "Orders" }, { id: "settings", Icon: Settings, label: "Settings" }, { id: "analytics", Icon: BarChart3, label: "Analytics" }],
     },
     school: {
-      left: [{ id: "sdashboard", icon: "📊", label: "Dashboard" }],
-      right: [{ id: "profile", icon: "👤", label: "Profile" }],
+      left: [{ id: "sdashboard", Icon: Building2, label: "Dashboard" }],
+      right: [{ id: "profile", Icon: User, label: "Profile" }],
       more: [],
     },
   }[role as "student" | "vendor" | "rider" | "admin" | "school"] || { left: [], right: [], more: [] };
 
-  const NavBtn = ({ t }: any) => (
-    <button onClick={() => { setTab(t.id); setShowMore(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "6px 2px", background: "transparent", border: "none", cursor: "pointer", position: "relative" }}>
-      <div style={{ fontSize: 20, filter: t.id === tab ? `drop-shadow(0 0 6px ${G.gold})` : "none", transition: "filter .2s" }}>{t.icon}</div>
-      {t.id === "chow" && cartCount > 0 && <div style={{ position: "absolute", top: 2, right: "14%", width: 16, height: 16, borderRadius: "50%", background: G.gold, color: G.black, fontSize: 10, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{cartCount}</div>}
-      <div style={{ fontSize: 10, fontWeight: 600, color: t.id === tab ? G.gold : G.whiteDim, transition: "color .2s" }}>{t.label}</div>
-      {t.id === tab && <div style={{ position: "absolute", bottom: -14, left: "50%", transform: "translateX(-50%)", width: 18, height: 2, background: G.gold, borderRadius: 1 }} />}
-    </button>
-  );
+  const NavBtn = ({ t }: any) => {
+    const active = t.id === tab;
+    return (
+      <button onClick={() => { setTab(t.id); setShowMore(false); }} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "6px 2px", background: "transparent", border: "none", cursor: "pointer", position: "relative" }}>
+        <div style={{ filter: active ? `drop-shadow(0 0 6px ${G.gold})` : "none", transition: "filter .2s" }}>
+          <t.Icon size={20} color={active ? G.gold : G.whiteDim} strokeWidth={active ? 2.2 : 1.6} />
+        </div>
+        {t.id === "chow" && cartCount > 0 && <div style={{ position: "absolute", top: 0, right: "14%", minWidth: 16, height: 16, padding: "0 4px", borderRadius: 8, background: G.gold, color: G.black, fontSize: 10, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{cartCount}</div>}
+        <div style={{ fontSize: 10, fontWeight: 600, color: active ? G.gold : G.whiteDim, transition: "color .2s" }}>{t.label}</div>
+        {active && <div style={{ position: "absolute", bottom: -14, left: "50%", transform: "translateX(-50%)", width: 18, height: 2, background: G.gold, borderRadius: 1 }} />}
+      </button>
+    );
+  };
 
   return (
     <>
@@ -48,12 +54,15 @@ export function BottomNav({ role, tab, setTab, cartCount }: any) {
         <div style={{ position: "fixed", bottom: 82, left: "50%", transform: "translateX(-50%)", width: "calc(100% - 32px)", maxWidth: 500, background: G.b3, border: `1px solid ${G.goldBorder}`, borderRadius: 20, zIndex: 99, padding: "18px 14px 14px", boxShadow: "0 -8px 40px rgba(0,0,0,0.8)", animation: "popUp .28s cubic-bezier(0.34,1.56,0.64,1)" }}>
           <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.14em", color: G.whiteDim, textAlign: "center", marginBottom: 14 }}>More Services</div>
           <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(cfg.more.length, 3)},1fr)`, gap: 10 }}>
-            {cfg.more.map((t: any) => (
-              <button key={t.id} onClick={() => { setTab(t.id); setShowMore(false); }} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 7, background: t.id === tab ? "rgba(201,168,76,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${t.id === tab ? "rgba(201,168,76,0.4)" : "rgba(255,255,255,0.06)"}`, borderRadius: 14, padding: "14px 8px", cursor: "pointer", transition: "all .2s" }}>
-                <div style={{ fontSize: 26 }}>{t.icon}</div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: t.id === tab ? G.gold : G.whiteDim, textAlign: "center", letterSpacing: "0.04em", textTransform: "uppercase" }}>{t.label}</div>
-              </button>
-            ))}
+            {cfg.more.map((t: any) => {
+              const active = t.id === tab;
+              return (
+                <button key={t.id} onClick={() => { setTab(t.id); setShowMore(false); }} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, background: active ? "rgba(201,168,76,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${active ? "rgba(201,168,76,0.4)" : "rgba(255,255,255,0.06)"}`, borderRadius: 14, padding: "14px 8px", cursor: "pointer", transition: "all .2s" }}>
+                  <t.Icon size={24} color={active ? G.gold : G.whiteDim} strokeWidth={1.7} />
+                  <div style={{ fontSize: 10, fontWeight: 600, color: active ? G.gold : G.whiteDim, textAlign: "center", letterSpacing: "0.04em", textTransform: "uppercase" }}>{t.label}</div>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

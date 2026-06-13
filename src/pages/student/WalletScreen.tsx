@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { Wallet, Hourglass, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { G, btn, card, inp } from "@/lib/nexgo-theme";
-import { STitle, PHeader, Spinner } from "@/components/nexgo/SharedUI";
+import { STitle, Spinner } from "@/components/nexgo/SharedUI";
 import { toast } from "@/components/nexgo/ToastContainer";
 import { initializeKorapayPayment } from "@/lib/korapay.functions";
 
@@ -55,7 +56,15 @@ export function WalletScreen({ wallet }: any) {
 
   return (
     <div style={{ padding: "24px 16px", display: "flex", flexDirection: "column", gap: 20, animation: "fadeUp .4s ease", maxWidth: 800, margin: "0 auto", width: "100%" }}>
-      <PHeader title="NexWallet" sub="Your campus money" icon="💳" />
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ width: 44, height: 44, borderRadius: 12, background: `linear-gradient(135deg,${G.goldGlow},transparent)`, border: `1px solid ${G.goldBorder}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Wallet size={22} color={G.gold} strokeWidth={1.7} />
+        </div>
+        <div>
+          <div style={{ fontFamily: "'Cormorant Garamond'", fontSize: 26, fontWeight: 700, color: G.white, lineHeight: 1.1 }}>NexWallet</div>
+          <div style={{ color: G.whiteDim, fontSize: 12 }}>Your campus money</div>
+        </div>
+      </div>
       <div style={{ background: `linear-gradient(135deg,${G.goldDark},${G.gold})`, borderRadius: 22, padding: "32px 24px", textAlign: "center", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", right: -30, top: -30, width: 140, height: 140, borderRadius: "50%", background: "rgba(255,255,255,0.1)" }} />
         <div style={{ fontSize: 12, color: G.black, opacity: .7, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 8 }}>Total Balance</div>
@@ -72,7 +81,7 @@ export function WalletScreen({ wallet }: any) {
         <input style={{ ...inp({ marginBottom: 8 }) }} type="number" min={100} placeholder="Enter amount (min ₦100)…" value={amt} onChange={e => setAmt(e.target.value)} />
         <div style={{ fontSize: 11, color: G.whiteDim, marginBottom: 12 }}>Minimum deposit is ₦100</div>
         <button onClick={fund} disabled={funding} style={{ ...btn("gold", { width: "100%", padding: "13px", opacity: funding ? .6 : 1 }) }}>
-          {funding ? <><Spinner /> Connecting…</> : "Pay with KoraPay →"}
+          {funding ? <><Spinner /> Connecting…</> : <>Pay with KoraPay <ArrowRight size={15} /></>}
         </button>
       </div>
       {deposits.filter((d: any) => d.status !== "completed").length > 0 && (
@@ -82,7 +91,7 @@ export function WalletScreen({ wallet }: any) {
             {deposits.filter((d: any) => d.status !== "completed").map((d: any) => (
               <div key={d.id} style={card({ display: "flex", justifyContent: "space-between", alignItems: "center" })}>
                 <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                  <div style={{ width: 40, height: 40, borderRadius: "50%", background: G.b4, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>⏳</div>
+                  <div style={{ width: 40, height: 40, borderRadius: "50%", background: G.b4, display: "flex", alignItems: "center", justifyContent: "center" }}><Hourglass size={18} color={G.gold} /></div>
                   <div>
                     <div style={{ fontWeight: 600, fontSize: 13, color: G.white }}>Korapay Deposit</div>
                     <div style={{ fontSize: 11, color: G.whiteDim }}>{d.reference} · {d.status}</div>
