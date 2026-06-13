@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { ArrowLeft, Star, Clock, Plus, Minus, ShoppingCart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { G, btn, card } from "@/lib/nexgo-theme";
 
@@ -26,14 +27,15 @@ export function RestaurantDetail({ r, cart, setCart, onBack, onCheckout }: any) 
 
   return (
     <div style={{ padding: "24px 16px", animation: "fadeUp .4s ease", maxWidth: 800, margin: "0 auto", width: "100%" }}>
-      <button onClick={onBack} style={{ ...btn("ghost", { padding: "8px 16px", fontSize: 13, marginBottom: 16 }) }}>← Back</button>
+      <button onClick={onBack} style={{ ...btn("ghost", { padding: "8px 14px", fontSize: 13, marginBottom: 16, gap: 6 }) }}><ArrowLeft size={14} /> Back</button>
       <div style={{ ...card({ display: "flex", gap: 16, alignItems: "center", marginBottom: 20, background: G.b4 }) }}>
         <div style={{ fontSize: 52 }}>{r.image}</div>
         <div>
           <div style={{ fontFamily: "'Cormorant Garamond'", fontSize: 24, fontWeight: 700, color: G.white }}>{r.name}</div>
           <div style={{ fontSize: 13, color: G.whiteDim }}>{r.cuisine}</div>
-          <div style={{ display: "flex", gap: 12, marginTop: 6, fontSize: 13, color: G.gold }}>
-            <span>⭐ {r.rating}</span><span>🕐 {r.delivery_time}</span>
+          <div style={{ display: "flex", gap: 12, marginTop: 6, fontSize: 13, color: G.gold, alignItems: "center" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Star size={13} fill={G.gold} /> {r.rating}</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}><Clock size={13} /> {r.delivery_time}</span>
           </div>
         </div>
       </div>
@@ -52,11 +54,11 @@ export function RestaurantDetail({ r, cart, setCart, onBack, onCheckout }: any) 
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               {qtyOf(item.id) > 0 && (
                 <>
-                  <button onClick={() => dec(item)} style={{ width: 30, height: 30, borderRadius: "50%", background: G.b5, border: "none", color: G.white, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
+                  <button onClick={() => dec(item)} aria-label="Decrease" style={{ width: 30, height: 30, borderRadius: 9, background: G.b4, border: `1px solid ${G.b5}`, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}><Minus size={14} color={G.white} /></button>
                   <span style={{ fontWeight: 700, color: G.gold, minWidth: 20, textAlign: "center", fontFamily: "'DM Mono'" }}>{qtyOf(item.id)}</span>
                 </>
               )}
-              <button onClick={() => add(item)} style={{ width: 30, height: 30, borderRadius: "50%", background: `linear-gradient(135deg,${G.gold},${G.goldDark})`, border: "none", color: G.black, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
+              <button onClick={() => add(item)} aria-label="Add" style={{ width: 30, height: 30, borderRadius: 9, background: `linear-gradient(135deg,${G.gold},${G.goldDark})`, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}><Plus size={14} color={G.black} /></button>
             </div>
           </div>
         ))}
@@ -64,7 +66,7 @@ export function RestaurantDetail({ r, cart, setCart, onBack, onCheckout }: any) 
       {total > 0 && (
         <div style={{ position: "fixed", bottom: 80, left: "50%", transform: "translateX(-50%)", width: "calc(100% - 32px)", maxWidth: 500, zIndex: 90 }}>
           <button onClick={onCheckout} style={{ ...btn("gold", { width: "100%", padding: "16px", borderRadius: 14, fontSize: 15, justifyContent: "space-between", boxShadow: `0 8px 24px rgba(201,168,76,0.35)`, gap: 0 }) }}>
-            <span>🛒 Checkout</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><ShoppingCart size={16} /> Checkout</span>
             <span>₦{total.toLocaleString()}</span>
           </button>
         </div>
