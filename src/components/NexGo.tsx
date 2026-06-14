@@ -19,7 +19,7 @@ import { VendorApp } from "@/pages/vendor/VendorApp";
 import { RiderApp } from "@/pages/rider/RiderApp";
 import { AdminApp } from "@/pages/admin/AdminApp";
 import { SchoolApp } from "@/pages/school/SchoolApp";
-import { NotificationsBell } from "@/components/nexgo/NotificationsBell";
+
 
 export default function NexGoApp() {
   useEffect(() => { injectStyles(); }, []);
@@ -77,9 +77,6 @@ export default function NexGoApp() {
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column", background: G.black, position: "relative" }}>
       <ToastContainer />
-      <div style={{ position: "fixed", top: 14, right: 14, zIndex: 110 }}>
-        <NotificationsBell />
-      </div>
       <div style={{ flex: 1, overflowY: "auto", paddingBottom: 80 }}>
         {role === "student" && <StudentContent />}
         {role === "vendor" && <VendorApp tab={tab} onLogout={handleLogout} />}
