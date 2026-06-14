@@ -14,6 +14,7 @@ import { NexTrip } from "@/pages/student/NexTrip";
 import { WalletScreen } from "@/pages/student/WalletScreen";
 import { ProfileScreen } from "@/pages/shared/ProfileScreen";
 import { ChatScreen } from "@/pages/shared/ChatScreen";
+import { LegalScreen } from "@/pages/shared/LegalScreen";
 import { VendorApp } from "@/pages/vendor/VendorApp";
 import { RiderApp } from "@/pages/rider/RiderApp";
 import { AdminApp } from "@/pages/admin/AdminApp";
@@ -67,8 +68,9 @@ export default function NexGoApp() {
     if (tab === "dispatch") return <NexDispatch />;
     if (tab === "trip") return <NexTrip wallet={walletBalance} />;
     if (tab === "wallet") return <WalletScreen wallet={walletBalance} />;
-    if (tab === "profile") return <ProfileScreen onLogout={handleLogout} />;
+    if (tab === "profile") return <ProfileScreen onLogout={handleLogout} setTab={setTab} />;
     if (tab === "chat") return <ChatScreen />;
+    if (tab === "legal") return <LegalScreen onBack={() => setTab("profile")} />;
     return <StudentHome wallet={walletBalance} setTab={setTab} profile={profile} />;
   };
 
