@@ -1,14 +1,23 @@
 import { useState, useEffect, useCallback } from "react";
 import {
-  UtensilsCrossed, Package, Bus, AlertTriangle, Search, Eye, EyeOff,
-  Plus, ArrowDownLeft, History, Receipt, Bell, ShieldCheck, FileText,
-  Headphones, Sparkles, ChevronRight,
+  UtensilsCrossed, AlertTriangle, Search, Eye, EyeOff,
+  Plus, ArrowDownLeft, History, Receipt, ShieldCheck,
+  Sparkles, ChevronRight,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { G, btn, card, inp } from "@/lib/nexgo-theme";
 import { STitle, Badge, Spinner } from "@/components/nexgo/SharedUI";
 import { toast } from "@/components/nexgo/ToastContainer";
+import { NotificationsBell } from "@/components/nexgo/NotificationsBell";
+import iconChow from "@/assets/icon-chow.png";
+import iconDispatch from "@/assets/icon-dispatch.png";
+import iconTrip from "@/assets/icon-trip.png";
+import iconOrders from "@/assets/icon-orders.png";
+import iconSupport from "@/assets/icon-support.png";
+import iconSafety from "@/assets/icon-safety.png";
+import iconHowItWorks from "@/assets/icon-howitworks.png";
+import iconRewards from "@/assets/icon-rewards.png";
 
 export function StudentHome({ wallet, setTab, profile }: any) {
   const [orders, setOrders] = useState<any[]>([]);
@@ -68,14 +77,14 @@ export function StudentHome({ wallet, setTab, profile }: any) {
   ];
 
   const services = [
-    { Icon: UtensilsCrossed, label: "NexChow", tint: G.gold, onClick: () => setTab("chow") },
-    { Icon: Package, label: "Dispatch", tint: G.gold, onClick: () => setTab("dispatch") },
-    { Icon: Bus, label: "NexTrip", tint: G.gold, onClick: () => setTab("trip") },
-    { Icon: Receipt, label: "Orders", tint: G.gold, onClick: () => {} },
-    { Icon: Headphones, label: "Support", tint: G.gold, onClick: () => setTab("chat") },
-    { Icon: ShieldCheck, label: "Safety", tint: G.gold, onClick: () => setTab("legal") },
-    { Icon: FileText, label: "How it works", tint: G.gold, onClick: () => setTab("legal") },
-    { Icon: Sparkles, label: "Rewards", tint: G.gold, onClick: () => {} },
+    { img: iconChow, label: "NexChow", onClick: () => setTab("chow") },
+    { img: iconDispatch, label: "Dispatch", onClick: () => setTab("dispatch") },
+    { img: iconTrip, label: "NexTrip", onClick: () => setTab("trip") },
+    { img: iconOrders, label: "Orders", onClick: () => {} },
+    { img: iconSupport, label: "Support", onClick: () => setTab("chat") },
+    { img: iconSafety, label: "Safety", onClick: () => setTab("legal") },
+    { img: iconHowItWorks, label: "How it works", onClick: () => setTab("legal") },
+    { img: iconRewards, label: "Rewards", onClick: () => {} },
   ];
 
   return (
@@ -100,9 +109,7 @@ export function StudentHome({ wallet, setTab, profile }: any) {
           <div style={{ fontSize: 11, color: G.whiteDim, letterSpacing: ".04em" }}>Welcome back</div>
           <div style={{ fontSize: 16, fontWeight: 700, color: G.white }}>Hi, {firstName}</div>
         </div>
-        <button onClick={() => setTab("chat")} style={{ width: 40, height: 40, borderRadius: 12, background: G.b3, border: `1px solid ${G.b5}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", position: "relative" }}>
-          <Bell size={18} color={G.white} strokeWidth={1.7} />
-        </button>
+        <NotificationsBell />
       </div>
 
       {/* Balance card — fintech style */}
@@ -157,8 +164,8 @@ export function StudentHome({ wallet, setTab, profile }: any) {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14 }}>
           {services.map((s) => (
             <button key={s.label} onClick={s.onClick} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 7, background: "transparent", border: "none", cursor: "pointer", padding: 4 }}>
-              <div style={{ width: 52, height: 52, borderRadius: 16, background: G.b4, border: `1px solid ${G.b5}`, display: "flex", alignItems: "center", justifyContent: "center", transition: "all .2s" }}>
-                <s.Icon size={22} color={s.tint} strokeWidth={1.7} />
+              <div style={{ width: 60, height: 60, borderRadius: 18, background: `linear-gradient(145deg, ${G.b4}, ${G.b3})`, border: `1px solid ${G.goldBorder}`, display: "flex", alignItems: "center", justifyContent: "center", transition: "all .2s", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 12px rgba(0,0,0,0.25)" }}>
+                <img src={s.img} alt={s.label} width={44} height={44} loading="lazy" style={{ objectFit: "contain" }} />
               </div>
               <div style={{ fontSize: 11, fontWeight: 600, color: G.white, textAlign: "center", lineHeight: 1.2 }}>{s.label}</div>
             </button>
