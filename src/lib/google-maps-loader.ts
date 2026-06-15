@@ -1,5 +1,5 @@
 // Singleton loader for the Google Maps JS API (async, with callback).
-let mapsPromise: Promise<typeof google.maps> | null = null;
+let mapsPromise: Promise<any> | null = null;
 
 declare global {
   interface Window {
@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-export function loadGoogleMaps(): Promise<typeof google.maps> {
+export function loadGoogleMaps(): Promise<any> {
   if (typeof window === "undefined") return Promise.reject(new Error("no window"));
   if (window.google?.maps) return Promise.resolve(window.google.maps);
   if (mapsPromise) return mapsPromise;
