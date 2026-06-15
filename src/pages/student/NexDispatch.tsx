@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { G, btn, card, inp } from "@/lib/nexgo-theme";
 import { PHeader, Lbl, Badge, Spinner } from "@/components/nexgo/SharedUI";
 import { toast } from "@/components/nexgo/ToastContainer";
+import { LiveMap } from "@/components/nexgo/LiveMap";
 
 export function NexDispatch() {
   const { user } = useAuth();
@@ -85,16 +86,28 @@ export function NexDispatch() {
       {view === "track" && (
         <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 14 }}>
           {dispatches.length === 0 && <div style={{ ...card(), textAlign: "center", color: G.whiteDim }}>No dispatches yet</div>}
-          {dispatches.map((d: any) => (
-            <div key={d.id} style={card({ display: "flex", justifyContent: "space-between", alignItems: "center" })}>
-              <div>
-                <div style={{ fontWeight: 600, color: G.white, fontSize: 14 }}>{d.package_description || "Package"}</div>
-                <div style={{ fontSize: 12, color: G.whiteDim, marginTop: 2 }}>{d.pickup_location} → {d.dropoff_location}</div>
-                <div style={{ fontSize: 12, color: G.gold, fontFamily: "'DM Mono'", marginTop: 4 }}>₦{d.fee}</div>
+          {dispatches.map((d: any) => {
+            const isActive = !["delivered", "Delivered", "cancelled", "Done"].includes(d.status);
+            return (
+              <div key={d.id} style={card({ display: "flex", flexDirection: "column", gap: 12 })}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontWeight: 600, color: G.white, fontSize: 14 }}>{d.package_description || "Package"}</div>
+                    <div style={{ fontSize: 12, color: G.whiteDim, marginTop: 2 }}>{d.pickup_location} → {d.dropoff_location}</div>
+                    <div style={{ fontSize: 12, color: G.gold, fontFamily: "'DM Mono'", marginTop: 4 }}>₦{d.fee}</div>
+                  </div>
+                  <Badge status={d.status} />
+                </div>
+                {isActive && (
+                  <LiveMap
+                    riderId={d.rider_id}
+                    label={d.rider_id ? "Rider is on the way" : "Waiting for rider"}
+                    height={220}
+                  />
+                )}
               </div>
-              <Badge status={d.status} />
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
