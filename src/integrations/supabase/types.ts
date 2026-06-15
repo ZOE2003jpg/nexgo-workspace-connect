@@ -519,6 +519,30 @@ export type Database = {
         }
         Relationships: []
       }
+      rider_locations: {
+        Row: {
+          heading: number | null
+          latitude: number
+          longitude: number
+          rider_id: string
+          updated_at: string
+        }
+        Insert: {
+          heading?: number | null
+          latitude: number
+          longitude: number
+          rider_id: string
+          updated_at?: string
+        }
+        Update: {
+          heading?: number | null
+          latitude?: number
+          longitude?: number
+          rider_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       rider_profiles: {
         Row: {
           approved: boolean
