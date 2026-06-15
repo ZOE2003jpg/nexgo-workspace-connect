@@ -7,6 +7,7 @@ import { toast } from "@/components/nexgo/ToastContainer";
 import { ProfileScreen } from "@/pages/shared/ProfileScreen";
 import { ChatScreen } from "@/pages/shared/ChatScreen";
 import { RiderOnboarding } from "@/pages/rider/RiderOnboarding";
+import { RiderLocationBroadcaster } from "@/components/nexgo/RiderLocationBroadcaster";
 
 export function RiderApp({ tab, onLogout }: any) {
   const { user } = useAuth();
@@ -99,6 +100,7 @@ export function RiderApp({ tab, onLogout }: any) {
   // Rider Dashboard
   return (
     <div style={{ padding: "24px 16px", display: "flex", flexDirection: "column", gap: 20, animation: "fadeUp .4s ease", maxWidth: 800, margin: "0 auto", width: "100%" }}>
+      <RiderLocationBroadcaster active={online} />
       {codeOpen && (
         <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => { setCodeOpen(false); setCodeInput(""); }}>
           <div onClick={e => e.stopPropagation()} style={{ ...card({ maxWidth: 380, width: "100%", textAlign: "center" }) }}>
@@ -147,7 +149,7 @@ export function RiderApp({ tab, onLogout }: any) {
           <div style={{ fontSize: 13, color: G.whiteDim, marginBottom: 4 }}>🏪 {(d.restaurants as any)?.name}</div>
           {d.delivery_address && <div style={{ fontSize: 13, color: G.whiteDim }}>🏠 {d.delivery_address}</div>}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 12 }}>
-            <span style={{ color: G.gold, fontFamily: "'DM Mono'", fontWeight: 700 }}>₦{d.delivery_fee}</span>
+            <span style={{ color: G.gold, fontFamily: "'DM Mono'", fontWeight: 700, fontSize: 13 }}>Earn ₦{d.delivery_fee}</span>
             {d.status === "ready" && (
               <button onClick={() => updateOrder(d.id, "out_for_delivery")} disabled={updatingId === d.id} style={{ ...btn("gold", { padding: "8px 16px", fontSize: 13, opacity: updatingId === d.id ? .5 : 1 }) }}>
                 {updatingId === d.id ? <Spinner size={12} /> : "Pick Up"}
@@ -169,7 +171,7 @@ export function RiderApp({ tab, onLogout }: any) {
           </div>
           <div style={{ fontSize: 13, color: G.whiteDim }}>📍 {d.pickup_location} → {d.dropoff_location}</div>
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12 }}>
-            <span style={{ color: G.gold, fontFamily: "'DM Mono'" }}>₦{d.fee}</span>
+            <span style={{ color: G.gold, fontFamily: "'DM Mono'", fontSize: 13 }}>Earn ₦{d.fee}</span>
             {d.status === "Pending" || d.status === "pending" ? (
               <button onClick={() => acceptDispatch(d.id)} disabled={updatingId === d.id} style={{ ...btn("gold", { padding: "8px 16px", fontSize: 12 }) }}>Accept</button>
             ) : (
