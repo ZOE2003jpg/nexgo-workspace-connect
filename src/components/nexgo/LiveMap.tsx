@@ -128,7 +128,7 @@ export function LiveMap({ riderId, pickup, dropoff, fallbackCenter, height = 260
           </Marker>
         )}
         {pickup && dropoff && (
-          <Polyline positions={polyPoints.map((p) => [p.lat, p.lng])} pathOptions={{ color: "#C9A84C", weight: 3, opacity: 0.7 }} />
+          <Polyline positions={polyPoints.map((p) => [p.lat, p.lng] as [number, number])} pathOptions={{ color: "#C9A84C", weight: 3, opacity: 0.7 }} />
         )}
         {pickup && dropoff && <FitBounds points={[pickup, dropoff, ...(riderPos ? [riderPos] : [])]} />}
         <PanTo pos={riderPos} />
