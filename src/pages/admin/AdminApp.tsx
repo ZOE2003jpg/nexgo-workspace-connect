@@ -121,20 +121,32 @@ export function AdminApp({ tab, onLogout }: any) {
               <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
                 <div style={{ width: 42, height: 42, borderRadius: "50%", background: `linear-gradient(135deg,${G.goldDark},${G.gold})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: G.black, flexShrink: 0 }}>{u.full_name?.[0] || "?"}</div>
                 <div>
-                  <div style={{ fontWeight: 600, color: G.white, fontSize: 14 }}>{u.full_name}</div>
+                  <div style={{ fontWeight: 600, color: G.white, fontSize: 14, display: "flex", alignItems: "center", gap: 6 }}>
+                    {u.full_name}
+                    <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 4, background: `${STATUS_COLOR[u.status] || G.whiteDim}22`, color: STATUS_COLOR[u.status] || G.whiteDim, textTransform: "uppercase", letterSpacing: 0.5 }}>{u.status || "pending"}</span>
+                  </div>
                   <div style={{ fontSize: 11, color: G.whiteDim }}>{u.email}</div>
                   <div style={{ fontSize: 11, color: G.whiteDim, textTransform: "capitalize" }}>{u.role} · Joined {new Date(u.created_at).toLocaleDateString()}</div>
                 </div>
               </div>
               {u.id !== user?.id && (
-                <select
-                  value={u.role}
-                  disabled={changingRole === u.id}
-                  onChange={e => changeUserRole(u.id, e.target.value)}
-                  style={{ ...inp({ width: "auto", padding: "6px 10px", fontSize: 12, cursor: "pointer" }) }}
-                >
-                  {ROLES.map(r => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
-                </select>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  <select
+                    value={u.role}
+                    disabled={changingRole === u.id}
+                    onChange={e => changeUserRole(u.id, e.target.value)}
+                    style={{ ...inp({ width: "auto", padding: "6px 10px", fontSize: 12, cursor: "pointer" }) }}
+                  >
+                    {ROLES.map(r => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
+                  </select>
+                  <select
+                    value={u.status || "pending"}
+                    onChange={e => changeUserStatus(u.id, e.target.value)}
+                    style={{ ...inp({ width: "auto", padding: "6px 10px", fontSize: 12, cursor: "pointer", color: STATUS_COLOR[u.status] || G.white }) }}
+                  >
+                    {STATUSES.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
+                  </select>
+                </div>
               )}
               {u.id === user?.id && <Badge status="You (Admin)" />}
             </div>
