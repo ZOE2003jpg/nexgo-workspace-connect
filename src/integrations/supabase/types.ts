@@ -419,6 +419,7 @@ export type Database = {
           full_name: string
           id: string
           phone: string | null
+          status: Database["public"]["Enums"]["account_status"]
           updated_at: string
         }
         Insert: {
@@ -428,6 +429,7 @@ export type Database = {
           full_name?: string
           id: string
           phone?: string | null
+          status?: Database["public"]["Enums"]["account_status"]
           updated_at?: string
         }
         Update: {
@@ -437,6 +439,7 @@ export type Database = {
           full_name?: string
           id?: string
           phone?: string | null
+          status?: Database["public"]["Enums"]["account_status"]
           updated_at?: string
         }
         Relationships: []
@@ -751,6 +754,14 @@ export type Database = {
         }
         Returns: Json
       }
+      admin_set_user_status: {
+        Args: {
+          _admin_id: string
+          _new_status: Database["public"]["Enums"]["account_status"]
+          _target_user_id: string
+        }
+        Returns: Json
+      }
       admin_update_setting: {
         Args: { _admin_id: string; _key: string; _value: number }
         Returns: Json
@@ -799,6 +810,7 @@ export type Database = {
       }
     }
     Enums: {
+      account_status: "pending" | "approved" | "rejected" | "suspended"
       app_role: "student" | "vendor" | "rider" | "admin" | "school"
       vendor_category:
         | "food"
@@ -933,6 +945,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      account_status: ["pending", "approved", "rejected", "suspended"],
       app_role: ["student", "vendor", "rider", "admin", "school"],
       vendor_category: ["food", "market", "supermarket", "retail", "container"],
     },
