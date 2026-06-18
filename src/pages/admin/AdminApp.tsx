@@ -8,6 +8,8 @@ import { toast } from "@/components/nexgo/ToastContainer";
 import { useAuth } from "@/hooks/useAuth";
 
 const ROLES = ["student", "vendor", "rider", "admin", "school"] as const;
+const STATUSES = ["pending", "approved", "rejected", "suspended"] as const;
+const STATUS_COLOR: Record<string, string> = { pending: G.gold, approved: "#22c55e", rejected: G.danger, suspended: G.danger };
 
 export function AdminApp({ tab, onLogout }: any) {
   const { user } = useAuth();
@@ -23,7 +25,7 @@ export function AdminApp({ tab, onLogout }: any) {
   const [changingRole, setChangingRole] = useState<string | null>(null);
 
   const loadUsers = async () => {
-    const { data: profiles } = await supabase.from("profiles").select("id, full_name, email, created_at, avatar_url").order("created_at", { ascending: false });
+    const { data: profiles } = await supabase.from("profiles").select("id, full_name, email, created_at, avatar_url, status").order("created_at", { ascending: false });
     if (!profiles) return;
     const enriched = await Promise.all(profiles.map(async (p: any) => {
       const { data: roleData } = await supabase.rpc("get_user_role", { _user_id: p.id });
@@ -31,6 +33,22 @@ export function AdminApp({ tab, onLogout }: any) {
     }));
     setUsers(enriched);
   };
+
+  const changeUserStatus = async (targetId: string, newStatus: string) => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase.rpc("admin_set_user_status" as any, {
+        _admin_id: user.id,
+        _target_user_id: targetId,
+        _new_status: newStatus as any,
+      });
+      if (error) throw error;
+      const result = data as any;
+      if (result?.success) { toast(result.message, "success"); await loadUsers(); }
+      else toast(result?.message || "Failed", "error");
+    } catch (e: any) { toast(e.message, "error"); }
+  };
+
 
   useEffect(() => {
     loadUsers();
