@@ -35,8 +35,8 @@ export default function SignUp() {
     const { error } = await signUp(email, password, name, role);
     setLoading(false);
     if (error) { setErrorMsg(error.message); return; }
-    toast("Check your email to confirm your account!", "success");
-    navigate("/signin");
+    toast("Account created! Awaiting admin approval.", "success");
+    navigate("/app");
   };
 
   return (
