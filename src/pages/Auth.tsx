@@ -38,8 +38,7 @@ export function Auth() {
     const { error } = await signUp(email, password, name, role);
     setLoading(false);
     if (error) { setErrorMsg(error.message); return; }
-    toast("Check your email to confirm your account!", "success");
-    setStep("login");
+    toast("Account created! Awaiting admin approval.", "success");
   };
 
   const handleForgotPassword = async () => {
