@@ -5,7 +5,7 @@ import type { User, Session } from "@supabase/supabase-js";
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  profile: { full_name: string | null; email: string | null; avatar_url: string | null } | null;
+  profile: { full_name: string | null; email: string | null; avatar_url: string | null; status: string | null } | null;
   role: string | null;
   walletBalance: number;
   loading: boolean;
@@ -27,8 +27,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase.from("profiles").select("full_name, email, avatar_url").eq("id", userId).single();
-    if (data) setProfile(data);
+    const { data } = await supabase.from("profiles").select("full_name, email, avatar_url, status").eq("id", userId).single();
+    if (data) setProfile(data as any);
   };
 
   const fetchRole = async (userId: string) => {
@@ -88,7 +88,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         emailRedirectTo: window.location.origin,
       },
     });
-    return { error };
+    if (error) return { error };
+    // Auto sign in (works when email confirmation is disabled in Supabase Auth settings)
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: signInError };
   };
 
   const signIn = async (email: string, password: string) => {

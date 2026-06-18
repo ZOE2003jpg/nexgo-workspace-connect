@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import NexGoApp from "@/components/NexGo";
 import { RequireAuth } from "@/components/RouteGuards";
+import { AccountStatusGate } from "@/components/AccountStatusGate";
 
 export const Route = createFileRoute("/app")({
   head: () => ({
@@ -11,7 +12,9 @@ export const Route = createFileRoute("/app")({
   }),
   component: () => (
     <RequireAuth>
-      <NexGoApp />
+      <AccountStatusGate>
+        <NexGoApp />
+      </AccountStatusGate>
     </RequireAuth>
   ),
 });
